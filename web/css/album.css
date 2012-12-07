@@ -1,0 +1,26 @@
+@import url(by8.css);
+
+#header {
+    display: none;
+    font-style: italic;
+    font-size: 1.5em;
+    padding: 10px;
+}
+#header .surname {
+    font: 2em normal ariel;
+    color: #07A;
+}
+#header .surname .f {
+    color: #F08;
+}
+
+#thumbs {
+    left: 50%;
+    -moz-transition: left 1s, opacity 0.3s, display 1s;
+    -webkit-transition: left 1s, opacity 0.3s, display 1s;
+    -o-transition: left 1s, opacity 0.3s, display 1s;
+}
+#viewer {
+}
+
+@import url(album-ios.css);

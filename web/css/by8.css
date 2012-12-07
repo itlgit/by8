@@ -1,0 +1,110 @@
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: #333;
+    /*background-color: #5D83CB;*/
+}
+
+.body {
+    position: absolute;
+}
+
+/*
+ * General Element
+ */
+.by8-hidden {
+    display: none;
+}
+
+/*
+ * by8.ui.Component
+ */
+.by8-comp {
+    position: absolute;
+}
+
+/*
+ * by8.ui.Panel
+ */
+.by8-comp.panel > * {
+    /*background-color: #C5CEE9;*/
+    padding: 5px;
+}
+.by8-comp.panel.transparent,
+.by8-comp.panel.transparent > * {
+    padding: 10px;
+    z-index: 0;
+    background-color: transparent;
+}
+.by8-comp.panel.transparent .opaque {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.5;
+    background-color: #FFF;
+    z-index: -1;
+}
+.by8-comp.panel > .bwrap > .body {
+    overflow: auto;
+}
+
+/*
+ * by8.ui.TabPanel
+ */
+.by8-comp.tabpanel {
+    border: 1px solid #999;
+}
+.by8-comp.tabpanel > .body > * > .title-bar {
+    display: none;
+}
+.by8-comp.tabpanel .header-strip {
+    padding-bottom: 0;
+    border-bottom: 1px solid #999;
+}
+.by8-comp.tabpanel .header-strip > * {
+    cursor: pointer;
+    padding: 0 5px;
+    border: 1px solid #999;
+    position: relative;
+    opacity: 0.5;
+    background-color: #FFF;
+    margin: 0 2px;
+}
+.by8-comp.tabpanel .header-strip > .active {
+    opacity: 1.0;
+    border-bottom: none;
+    font-size: 1.1em;
+    top: 0.1em;
+}
+
+/*
+ * by8.ui.Window
+ */
+.by8-comp.window {
+    position: absolute;
+    padding: 5px;
+    background-color: #FFF;
+}
+.by8-comp.window .title-bar {
+    /*background: #5D83CB url(images/window-decorations-sprite.png) repeat-x fixed 0 0;*/
+    margin-bottom: 5px;
+    text-align: center;
+}
+.by8-comp.window .body {
+}
+
+/*
+ * by8.ui.layout.CardLayout
+ */
+.by8-comp .card-layout {
+    position: relative;
+}
+.by8-comp .card-layout > * {
+    position: absolute;
+    left: 0;
+    top: 0;
+}

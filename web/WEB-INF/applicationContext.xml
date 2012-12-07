@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<!-- This is the main Spring config file.  It imports the others. -->
+<beans>
+
+	<bean id="dataSource" destroy-method="close"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://aeon/tags" />
+		<property name="username" value="tags_user" />
+		<property name="password" value="tags_user" />
+		<property name="defaultAutoCommit" value="false" />
+	</bean>
+
+	<!-- Hibernate SessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation">
+			<value>WEB-INF/hibernate.cfg.xml</value>
+		</property>
+		<property name="configurationClass">
+			<value>org.hibernate.cfg.AnnotationConfiguration</value>
+		</property>
+	</bean>
+	
+	<bean id="hibernateTemplate"
+		class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+		<!--property name="jdbcExceptionTranslator">
+			<ref bean="jdbcExceptionTranslator" />
+		</property-->
+	</bean>
+
+	<!-- Hibernate Transaction Manager Definition -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref local="sessionFactory" />
+		</property>
+	</bean>
+
+	<!-- Transactional proxy for the Catalog Service -->
+	<bean id="tagService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref local="transactionManager" />
+		</property>
+		<property name="target">
+			<ref local="tagServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="get*">PROPAGATION_REQUIRED</prop>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="change*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="resourceDao" class="com.byeight.tags.dao.ResourceDao" init-method="init">
+		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+	</bean>
+
+	<bean id="tagServiceTarget" class="com.byeight.tags.service.TagService">
+		<property name="resourceDao" ref="resourceDao"/>
+	</bean>
+
+</beans>
