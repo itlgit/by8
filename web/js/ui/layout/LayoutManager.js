@@ -2,6 +2,8 @@
     by8.require('by8.Observable');
     
     var my = by8.extend('by8.ui.layout.LayoutManager', by8.Observable, {
+        css: '',
+        
         /**
          * The container which we're laying out
          */
@@ -16,6 +18,9 @@
         
         setContainer: function(container) {
             this.container = container;
+            if (container) {
+                container.ct.addClass(this.css);
+            }
         },
         
         doLayout: function() {

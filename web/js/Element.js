@@ -49,10 +49,10 @@ by8.mixin(by8, {
                 h = w.height;
             }
             if (w !== undefined) {
-                this.setStyle('width', w+'px');
+                this.setStyle('width', w+ (by8.isNumber(w) ? 'px' : ''));
             }
             if (h !== undefined) {
-                this.setStyle('height', h+'px');
+                this.setStyle('height', h+ (by8.isNumber(h) ? 'px' : ''));
             }
         },
         setStyle: function(prop, value) {
@@ -90,6 +90,12 @@ by8.mixin(by8, {
         },
         show: function() {
             this.removeClass('by8-hidden');
+        },
+        visible: function() {
+            this.removeClass('by8-invisible');
+        },
+        invisible: function() {
+            this.addClass('by8-invisible');
         },
         query: function(path) {
             return by8(path, this.dom);

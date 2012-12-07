@@ -33,9 +33,14 @@ var my = by8.extend('by8.ui.Panel', by8.ui.Container, {
                 }]
             });
         }
-//        this.ct = this.body = el.createChild({
-//            css: 'body'
-//        });
+        
+        by8.require('by8.ui.layout.TableLayout');
+        this.toolbar = new by8.ui.Container({
+            css: 'toolbar',
+            layout: new by8.ui.layout.TableLayout(),
+            renderTo: el
+        });
+        
         this.bwrap = el.createChild({
             css: 'bwrap',
             children: [{
@@ -62,7 +67,11 @@ var my = by8.extend('by8.ui.Panel', by8.ui.Container, {
             h: offsetTop+bwrapHeight
         };
 //        this.body.setSize(parentWidth - this.frameSize.w, parentHeight - this.frameSize.h);
-        this.body.setSize(undefined, parentHeight - this.frameSize.h);
+        var newHeight = parentHeight - this.frameSize.h;
+        if (newHeight < 1) {
+            newHeight = 'auto';
+        }
+        this.body.setSize(undefined, newHeight);
     },
     
     setTitle: function(title) {

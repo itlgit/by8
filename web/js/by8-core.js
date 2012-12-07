@@ -182,9 +182,22 @@ globalEval = function(content) {
              */
             for (var i=0,len=children.length; i<len; i++) {
                 var child = children[i];
+                /*
+                 * Regular DOM node
+                 */
                 if (child.nodeName && child.nodeType) {
                     t.appendChild(child);
-                } else {
+                }
+                /*
+                 * Element
+                 */
+                else if (child.dom) {
+                    t.appendChild(child.dom);
+                }
+                /*
+                 * Child config object
+                 */
+                else {
                     t.appendChild(by8.createElement(child));
                 }
             }
@@ -295,7 +308,8 @@ globalEval = function(content) {
         },
         
         isArray: function(o) {
-            return by8.isObject(o) && 'length' in o && 'push' in o;
+//            return by8.isObject(o) && 'length' in o && 'push' in o;
+            return by8.isObject(o) && 'length' in o;
         },
         isFunction: function(o) {
             return typeof o === 'function';

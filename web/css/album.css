@@ -20,7 +20,22 @@
     -webkit-transition: left 1s, opacity 0.3s, display 1s;
     -o-transition: left 1s, opacity 0.3s, display 1s;
 }
-#viewer {
+#navigator {
+    position: absolute;
+}
+
+.folder-comp {
+    width: 100px;
+    height: 100px;
+    border: 3px dashed #999;
+    margin: 20px;
+    cursor: pointer;
+    overflow: hidden;
+    text-align: center;
+}
+.breadcrumb {
+    cursor: pointer;
+    border-left: 2px solid #999;
 }
 
 @import url(album-ios.css);

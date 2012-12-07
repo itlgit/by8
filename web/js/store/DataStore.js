@@ -14,6 +14,11 @@ var my = by8.extend('by8.store.DataStore', by8.Observable, {
     init: function(config) {
         this.records = [];
         by8.mixin(this, config);
+        
+        if (!this.reader) {
+            var Reader = by8.require('by8.store.JsonReader');
+            this.reader = new Reader();
+        }
     },
     
     size: function() {

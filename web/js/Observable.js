@@ -29,7 +29,7 @@ var my = by8.extend('by8.Observable', Object, {
     destroy: function() {
         var me = this;
         by8.each(this.listeners, function(listener, event) {
-            me.un(event, listener[0], listener[1]);
+            me.un(event, listener[0][0], listener[0][1]);
         });
     },
     
@@ -47,7 +47,7 @@ var my = by8.extend('by8.Observable', Object, {
         if (listeners) {
             var at = -1;
             by8.each(listeners, function(listener, i) {
-                if (listener[0] === callback && callback[1] === scope) {
+                if (listener[0] === callback && listener[1] === scope) {
                     at = i;
                     return false;
                 }

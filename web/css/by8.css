@@ -8,7 +8,7 @@ body {
 }
 
 .body {
-    position: absolute;
+    /*position: absolute;*/
 }
 
 /*
@@ -17,12 +17,15 @@ body {
 .by8-hidden {
     display: none;
 }
+.by8-invisible {
+    visibility: hidden;
+}
 
 /*
  * by8.ui.Component
  */
 .by8-comp {
-    position: absolute;
+    /*position: absolute;*/
 }
 
 /*
@@ -31,6 +34,9 @@ body {
 .by8-comp.panel > * {
     /*background-color: #C5CEE9;*/
     padding: 5px;
+}
+.by8-comp.panel > .title-bar {
+    cursor: default;
 }
 .by8-comp.panel.transparent,
 .by8-comp.panel.transparent > * {
@@ -58,7 +64,7 @@ body {
 .by8-comp.tabpanel {
     border: 1px solid #999;
 }
-.by8-comp.tabpanel > .body > * > .title-bar {
+.by8-comp.tabpanel > .bwrap > .body > * > .title-bar {
     display: none;
 }
 .by8-comp.tabpanel .header-strip {
@@ -69,6 +75,7 @@ body {
     cursor: pointer;
     padding: 0 5px;
     border: 1px solid #999;
+    border-bottom: none;
     position: relative;
     opacity: 0.5;
     background-color: #FFF;
@@ -107,4 +114,7 @@ body {
     position: absolute;
     left: 0;
     top: 0;
+}
+.by8-comp .flow-layout > * {
+    float: left;
 }

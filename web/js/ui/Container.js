@@ -76,11 +76,29 @@ var my = by8.extend('by8.ui.Container', by8.ui.Component, {
             });
             return;
         }
+        if (this.rendered && !child.rendered) {
+            child.render(this.ct);
+        }
         if (this.children.indexOf(child) < 0) {
             this.children.push(child);
             child.container = this;
             child.on('activated', this.setActiveChild, this);
             this.fireEvent('childadded', [child]);
+        }
+    },
+    
+    remove: function(child) {
+        var at = this.children.indexOf(child);
+        if (at > -1) {
+            this.children.splice(at, 1);
+            child.destroy();
+            this.fireEvent('childremoved', [child]);
+        }
+    },
+    
+    removeAll: function() {
+        while (this.children.length) {
+            this.remove(this.children[0]);
         }
     },
     
