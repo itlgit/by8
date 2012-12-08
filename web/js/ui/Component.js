@@ -69,11 +69,12 @@
             }
     
             by8.require('by8.ui.ComponentMgr');
-            by8.ui.ComponentMgr.set(this.config.id, this);
+            by8.setComp(this.id, this);
         },
         
         destroy: function() {
             this.el.destroy();
+            by8.removeComp(this.id);
             my.superclass.destroy.call(this);
         },
         
