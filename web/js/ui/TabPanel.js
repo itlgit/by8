@@ -15,7 +15,9 @@
             /*
              * Bring titleBar back to top
              */
-            this.el.insertBefore(this.titleBar, this.headerBar);
+            if (this.headerBar) {
+                this.el.insertBefore(this.titleBar, this.headerBar);
+            }
         },
         
         onTabAdded: function(tab) {

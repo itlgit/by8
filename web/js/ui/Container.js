@@ -112,6 +112,16 @@ var my = by8.extend('by8.ui.Container', by8.ui.Component, {
             this.activeChild = child;
             this.fireEvent('childactivated', [child]);
         }
+    },
+    
+    /**
+     * @override
+     * @param w
+     * @param h
+     */
+    setSize: function(w, h) {
+        my.superclass.setSize.call(this, w, h);
+        this.fireEvent('resize', [w, h]);
     }
 });
 })();

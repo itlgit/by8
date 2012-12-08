@@ -6,22 +6,73 @@
     font-size: 1.5em;
     padding: 10px;
 }
-#header .surname {
+.surname {
     font: 2em normal ariel;
     color: #07A;
 }
-#header .surname .f {
+.surname .f {
     color: #F08;
-}
-
-#thumbs {
-    left: 50%;
-    -moz-transition: left 1s, opacity 0.3s, display 1s;
-    -webkit-transition: left 1s, opacity 0.3s, display 1s;
-    -o-transition: left 1s, opacity 0.3s, display 1s;
 }
 #navigator {
     position: absolute;
+}
+
+#viewer {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    -moz-transition: opacity 0.5s linear;
+    -webkit-transition: opacity 0.5s linear;
+    -o-transition: opacity 0.5s linear;    
+    opacity: 1.0;
+}
+#viewer.by8-invisible {
+    -moz-transition: visibility 0s linear 0.5s, opacity 0.5s linear;
+    -webkit-transition: visibility 0s linear 0.5s, opacity 0.5s linear;
+    -o-transition: visibility 0s linear 0.5s, opacity 0.5s linear;
+    opacity: 0;
+}
+#viewer .opaque {
+    padding: 0;
+}
+#viewer .title-bar {
+    text-align: center;
+    color: #999;
+}
+#viewer .body {
+    text-align: center;
+}
+#viewer .body .view {
+    text-align: center;
+}
+#viewer .view > img,
+#viewer .view > video {
+}
+#viewer .view > .nav {
+    color: #999;
+    position: absolute;
+    top: 33%;
+    font-size: 7em;
+    opacity: 0.5;
+    cursor: pointer;
+    -moz-transition: opacity 0.2s linear;
+    -webkit-transition: opacity 0.2s linear;
+    -o-transition: opacity 0.2s linear;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#viewer .view > .nav:hover {
+    opacity: 0.95;
+}
+#viewer .view > .nav.prev {
+    left: 0;
+}
+#viewer .view > .nav.next {
+    right: 0;
 }
 
 .folder-comp {
@@ -35,7 +86,8 @@
 }
 .breadcrumb {
     cursor: pointer;
-    border-left: 2px solid #999;
+    font: 1.2em normal ariel;
+    text-shadow: -2px 0 2px #FFF, 0 2px 2px #FFF, 2px 0 2px #FFF, 0 -2px 2px #FFF;
 }
 
 @import url(album-ios.css);

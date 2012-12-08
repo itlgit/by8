@@ -7,10 +7,6 @@
          */
         css: 'card-layout',
         
-        constructor: function(config) {
-            my.superclass.constructor.call(this, config);
-        },
-        
         /**
          * @override
          * @param container
@@ -46,6 +42,14 @@
                 }
             });
             child.el.show();
+        },
+        
+        onContainerResize: function(w, h) {
+            my.superclass.onContainerResize.call(this, w, h);
+            console.debug('body resizing to '+w+'x'+h);
+            by8.each(this.container.children, function(c) {
+//                c.setSize(w, h);
+            });
         }
     });
 })();

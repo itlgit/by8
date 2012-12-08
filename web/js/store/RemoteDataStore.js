@@ -13,10 +13,9 @@ var my = by8.extend('by8.store.RemoteDataStore', by8.store.DataStore, {
          * If url given but no proxy, create proxy.  url and proxy are mutually
          * exclusive.
          */
-        if (this.url && !this.proxy) {
+        if (!this.proxy) {
             var Proxy = by8.require('by8.store.Proxy');
             this.proxy = new Proxy({
-                url: this.url,
                 listeners: {
                     loaded: function(data) {
                         this.read(data);
@@ -25,7 +24,6 @@ var my = by8.extend('by8.store.RemoteDataStore', by8.store.DataStore, {
                 }
             });
         }
-        
         this.reload();
     },
     
@@ -36,7 +34,9 @@ var my = by8.extend('by8.store.RemoteDataStore', by8.store.DataStore, {
      */
     reload: function(url) {
         this.url = url || this.url;
-        this.proxy.load(url || this.url);
+        if (this.url) {
+            this.proxy.load(this.url);
+        }
     }
 });
 })();

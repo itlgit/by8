@@ -20,7 +20,7 @@ globalEval = function(content) {
     var scripts = document.getElementsByTagName('script');
     for (var i=0,len=scripts.length; i<len; i++) {
         var src = scripts[i].getAttribute('src'),
-            coreAt = src.search(/\/by8-core\.js/);
+            coreAt = src && src.search(/\/by8-core\.js/);
         if (coreAt > 0) {
             modulePaths.defaultPath = src.substring(0, coreAt) + "/";
             break;
@@ -322,6 +322,10 @@ globalEval = function(content) {
         },
         isString: function(str) {
             return typeof str === 'string';
+        },
+        
+        proxy: function() {
+            return $.proxy.apply($, arguments);
         },
         
         /**

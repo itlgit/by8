@@ -20,6 +20,7 @@
             this.container = container;
             if (container) {
                 container.ct.addClass(this.css);
+                container.on('resize', this.onContainerResize, this);
             }
         },
         
@@ -28,6 +29,10 @@
              * Render all children
              */
             this.renderChild(this.container.children);
+        },
+        
+        onContainerResize: function(w, h) {
+            
         },
         
         /**

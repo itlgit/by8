@@ -100,6 +100,10 @@
                     css: this.getCssClassChain()
                 }
             )));
+            
+            if (this.hidden) {
+                this.hide();
+            }
             this.setPosition(this.x, this.y);
             this.setSize(this.width, this.height);
             this.initEvents();
@@ -107,7 +111,10 @@
         
         initEvents: function() {
             this.relayEvents(
-                'click'
+                'click',
+                'keydown',
+                'keyup',
+                'keypress'
             );
         },
         
@@ -166,6 +173,10 @@
             this.el.setPosition(x, y);
         },
         
+        getSize: function() {
+            return this.el.getSize();
+        },
+        
         /**
          * Sets the size of the component.
          * @param w
@@ -175,12 +186,42 @@
             this.el.setSize(w, h);
         },
         
-        hide: function() {
+        /**
+         * Hide the component
+         * @param hide Boolean to hide/show
+         */
+        hide: function(hide) {
+            if (hide === false) {
+                this.show();
+                return;
+            }
             this.el.hide();
+            this.fireEvent('hide', [this]);
         },
         
-        show: function() {
+        show: function(show) {
+            if (show === false) {
+                this.hide();
+                return;
+            }
             this.el.show();
+            this.fireEvent('show', [this]);
+        },
+        
+        visible: function(visible) {
+            if (visible === false) {
+                this.invisible();
+                return;
+            }
+            this.el.visible();
+        },
+        
+        invisible: function(invisible) {
+            if (invisible === false) {
+                this.visible();
+                retrun;
+            }
+            this.el.invisible();
         }
     });
 })();

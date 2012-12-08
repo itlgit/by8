@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <% boolean compiled = !"localhost".equals(request.getServerName()); %>
+<% String prefix = request.getServerName().matches("aeon|byeight") ? "/" : "http://www.byeight.com/"; %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,6 +12,9 @@
 <% } else {%>
     <link rel="stylesheet" href="/byeight/css/album.css"/>
 <% } %>
+<script type="text/javascript">
+var urlPrefix = "<%=prefix%>";
+</script>
 </head>
 
 <body>

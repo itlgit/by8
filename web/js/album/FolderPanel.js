@@ -5,7 +5,9 @@
     by8.require('by8.ui.Panel');
     
     var my = by8.extend('by8.album.FolderPanel', by8.ui.Panel, {
-        folderPath: undefined,
+        toolbar: true,
+        
+        initialPath: undefined,
         
         init: function(config) {
             if (!config.layout) {
@@ -20,12 +22,12 @@
             
             var Store = by8.require('by8.store.RemoteDataStore');
             this.store = new Store({
-                url: this.folderPath,
                 listeners: {
                     loaded: this.onStoreLoad,
                     scope: this
                 }
             });
+            this.reload(this.initialPath);
         },
         
         reload: function(path) {
@@ -102,9 +104,12 @@
                     html: file.lg,
                     path: file.lg,
                     thumb: file.tn,
+                    width: file.w,
+                    height: file.h,
+                    type: file.type,
                     listeners: {
                         click: function(comp) {
-                            console.debug('showing '+comp.path);
+                            me.fireEvent('fileclicked', [comp.path, me.store.get(0)]);
                         }
                     }
                 });

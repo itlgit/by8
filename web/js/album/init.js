@@ -5,10 +5,10 @@ by8.ready(function() {
         winWidth = win.innerWidth(),
         winHeight = win.innerHeight(),
         padding = 50;
-    var Panel = by8.require('by8.album.FolderPanel'),
-        n = new by8.album.Navigator({
+    var Panel = by8.require('by8.album.FolderPanel');
+    var n = new by8.album.Navigator({
         id: 'navigator',
-        title: 'Navigator',
+        title: '<span class="surname"><span class="f">N</span>guyen</span> Family Album',
         renderTo: '#body',
         x: padding/2,
         y: padding/2,
@@ -17,11 +17,11 @@ by8.ready(function() {
         children: [
             new Panel({
                 title: 'Photos',
-                folderPath: 'thumbs/photos/manifest.json'
+                initialPath: 'photos'
             }),
             new Panel({
                 title: 'Videos',
-                folderPath: 'thumbs/videos/manifest.json'
+                initialPath: 'videos'
             })
         ]
     });

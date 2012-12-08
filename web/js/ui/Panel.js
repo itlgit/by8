@@ -23,23 +23,26 @@ var my = by8.extend('by8.ui.Panel', by8.ui.Container, {
             el.addClass('transparent');
         }
        
-        if (this.title) {
-            this.titleBar = el.createChild({
-                css: 'title-bar',
-                children: [{
-                    tag: 'span',
-                    css: 'title-text',
-                    html: this.title
-                }]
+        this.titleBar = el.createChild({
+            css: 'title-bar',
+            children: [{
+                tag: 'span',
+                css: 'title-text'
+            }]
+        });
+        this.setTitle(this.title);
+        
+        /*
+         * TODO: convert toolbar from [] into component
+         */
+        if (this.toolbar) {
+            by8.require('by8.ui.layout.TableLayout');
+            this.toolbar = new by8.ui.Container({
+                css: 'toolbar',
+                layout: new by8.ui.layout.TableLayout(),
+                renderTo: el
             });
         }
-        
-        by8.require('by8.ui.layout.TableLayout');
-        this.toolbar = new by8.ui.Container({
-            css: 'toolbar',
-            layout: new by8.ui.layout.TableLayout(),
-            renderTo: el
-        });
         
         this.bwrap = el.createChild({
             css: 'bwrap',
@@ -66,7 +69,6 @@ var my = by8.extend('by8.ui.Panel', by8.ui.Container, {
             w: offsetLeft+bwrapWidth,
             h: offsetTop+bwrapHeight
         };
-//        this.body.setSize(parentWidth - this.frameSize.w, parentHeight - this.frameSize.h);
         var newHeight = parentHeight - this.frameSize.h;
         if (newHeight < 1) {
             newHeight = 'auto';
@@ -74,8 +76,16 @@ var my = by8.extend('by8.ui.Panel', by8.ui.Container, {
         this.body.setSize(undefined, newHeight);
     },
     
+    setSize: function(w, h) {
+        my.superclass.setSize.call(this, w, h);
+        if (this.body) {
+            this.body.setSize(undefined, h - this.frameSize.h);
+        }
+    },
+    
     setTitle: function(title) {
-        by8('.title-text', this.titleBar.dom)[0].innerHTML = this.title = title;
+        this.title = title || '';
+        this.titleBar.query('.title-text').html(title);
     }
 });
 })();

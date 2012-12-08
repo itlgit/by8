@@ -24,10 +24,11 @@ by8.mixin(by8, {
         un: function(eventName, callback) {
             by8(this.dom).unbind(eventName, callback);
         },
-        getSize: function() {
-            return {
-                width: this.dom.clientWidth || 0,
-                height: this.dom.clientHeight || 0};
+        attr: function(key, val) {
+            if (!val) {
+                return this.dom.getAttribute(key);
+            }
+            this.dom.setAttribute(key, val);
         },
         setPosition: function(x, y) {
             if (x !== undefined) {
@@ -37,6 +38,11 @@ by8.mixin(by8, {
                 this.setStyle('top', y+'px');
             }
         },
+        getSize: function() {
+            return {
+                width: this.dom.clientWidth || 0,
+                height: this.dom.clientHeight || 0};
+        },
         /**
          * Sets the size of the DOM element.  If 'w' is an object, it should
          * contain 'width' and/or 'height' properties.
@@ -45,8 +51,8 @@ by8.mixin(by8, {
          */
         setSize: function(w, h) {
             if (by8.isObject(w)) {
-                w = w.width;
                 h = w.height;
+                w = w.width;
             }
             if (w !== undefined) {
                 this.setStyle('width', w+ (by8.isNumber(w) ? 'px' : ''));

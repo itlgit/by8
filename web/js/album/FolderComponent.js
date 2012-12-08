@@ -8,7 +8,8 @@
             my.superclass.init.call(this, config);
             if (this.thumb) {
                 this.el.update(
-                    '<img src="http://www.byeight.com/'+this.thumb+'">');
+                    '<img src="'+window.urlPrefix+this.thumb+'">'
+                );
             }
         }
     });

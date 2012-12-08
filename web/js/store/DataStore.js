@@ -29,6 +29,10 @@ var my = by8.extend('by8.store.DataStore', by8.Observable, {
         return by8.each(this.records, callback, scope);
     },
     
+    get: function(index) {
+        return this.records[index];
+    },
+    
     load: function(records) {
         this.records = [].concat(records);
         this.fireEvent('loaded', [this, this.records]);
