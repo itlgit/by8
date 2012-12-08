@@ -215,6 +215,7 @@
                 return;
             }
             this.el.visible();
+            this.fireEvent('visible', [this]);
         },
         
         invisible: function(invisible) {
@@ -223,6 +224,7 @@
                 retrun;
             }
             this.el.invisible();
+            this.fireEvent('invisible', [this]);
         }
     });
 })();

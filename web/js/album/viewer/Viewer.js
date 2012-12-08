@@ -19,13 +19,6 @@
             this.img = this.view.createChild({
                 tag: 'img'
             });
-            this.video = this.view.createChild({
-                tag: 'video',
-                children: [{
-                    tag: 'source',
-                    type: 'video/flv'
-                }]
-            });
             this.nextButton = this.view.createChild({
                 tag: 'span',
                 css: 'nav next',
@@ -35,6 +28,52 @@
             
             this.prevButton.on('click', by8.proxy(this.previous, this));
             this.nextButton.on('click', by8.proxy(this.next, this));
+            
+            this.on(this.closeAction, this.clearView, this);
+        },
+        
+        createImage: function(thumb, path, w, h) {
+            var img = this.view.createChild({
+                tag: 'img',
+                src: path,
+                width: w,
+                height: h,
+                style: 'background:transparent url("'+thumb+'") 0 0 no-repeat scroll;background-size:'+w+'px '+h+'px',
+            });
+            return img;
+        },
+        
+        createVideo: function(thumb, path, w, h) {
+            var vid = this.view.createChild({
+                tag: 'object',
+                data: 'FlvPlayer.swf',
+                type: 'application/x-shockwave-flash',
+                style: 'visibility:visible;background:transparent url("'+thumb+'") 0 0 no-repeat scroll;background-size:'+w+'px '+h+'px',
+                width: w,
+                height: h,
+                children: [{
+                    tag: 'param',
+                    name: 'bgcolor',
+                    value: 'FFFFFF'
+                },{
+                    tag: 'param',
+                    name: 'menu',
+                    value: 'true'
+                },{
+                    tag: 'param',
+                    name: 'allowfullscreen',
+                    value: 'true'
+                },{
+                    tag: 'param',
+                    name: 'wmode',
+                    value: 'transparent'
+                },{
+                    tag: 'param',
+                    name: 'flashvars',
+                    value: 'flvpVideoSource='+path+'&flvpWidth='+w+'&flvpHeight='+h
+                }]
+            });
+            return vid;
         },
         
         setManifest: function(manifest) {
@@ -68,21 +107,24 @@
             var file = this.findFile(path);
                 viewSize = this.getProportionalSize(file.w, file.h);
             
-            var fullPath = window.urlPrefix+file.lg,
-                img = this.img,
-                video = this.video;
+            var lgPath = window.urlPrefix+file.lg,
+                tnPath =window.urlPrefix+file.tn;
+            var fileEl = undefined;
             if (file.type === 'image') {
-                img.show();
-                video.hide();
-                img.setSize(viewSize);
-                img.attr('src', fullPath);
+                fileEl = this.createImage(tnPath, lgPath, viewSize.width, viewSize.height);
             } else {
-                video.show();
-                img.hide();
-                video.setSize(viewSize);
-                video.query('source').attr('src', fullPath);
+                fileEl = this.createVideo(tnPath, lgPath, viewSize.width, viewSize.height);
             }
+            this.clearView();
+            this.view.appendChild(fileEl);
             this.visible();
+        },
+        
+        /**
+         * Removes the image/video from the viewer
+         */
+        clearView: function() {
+            this.view.query('img,object').remove();
         },
         
         findFile: function(path) {
