@@ -91,12 +91,12 @@ globalEval = function(content) {
         
         /**
          * Defers execution of a callback function until after the timeout period.
-         * @param {Number} timeout The timeout millis to wait before executing the callback
          * @param {Function} callback The callback funtcion
+         * @param {Number} timeout The timeout millis to wait before executing the callback
          * @param {Object} scope The scope in which to execute the callback
          * @param {Array} args The arguments to pass to the callback at execution time
          */
-        defer: function(timeout, callback, scope, args) {
+        defer: function(callback, timeout, scope, args) {
             setTimeout(function() {
                 callback.apply(scope, args || []);
             }, timeout);

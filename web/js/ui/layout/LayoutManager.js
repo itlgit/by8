@@ -17,10 +17,12 @@
         },
         
         setContainer: function(container) {
-            this.container = container;
-            if (container) {
+            if (container && !this.container) {
+                this.container = container;
                 container.ct.addClass(this.css);
-                container.on('resize', this.onContainerResize, this);
+                container.ct.on('resize', this.onContainerResize, this);
+                var ctSize = container.ct.getSize();
+                this.onContainerResize(ctSize.width, ctSize.height);
             }
         },
         

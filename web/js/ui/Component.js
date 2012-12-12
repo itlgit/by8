@@ -106,7 +106,6 @@
                 this.hide();
             }
             this.setPosition(this.x, this.y);
-            this.setSize(this.width, this.height);
             this.initEvents();
         },
         
@@ -154,6 +153,7 @@
             by8.get(target).appendChild(this.el);
             this.rendered = true;
             this.fireEvent('rendered', [this]);
+            this.setSize(this.width, this.height);
         },
         
         /**

@@ -51,27 +51,17 @@
                 style: 'visibility:visible;background:transparent url("'+thumb+'") 0 0 no-repeat scroll;background-size:'+w+'px '+h+'px',
                 width: w,
                 height: h,
-                children: [{
-                    tag: 'param',
-                    name: 'bgcolor',
-                    value: 'FFFFFF'
-                },{
-                    tag: 'param',
-                    name: 'menu',
-                    value: 'true'
-                },{
-                    tag: 'param',
-                    name: 'allowfullscreen',
-                    value: 'true'
-                },{
-                    tag: 'param',
-                    name: 'wmode',
-                    value: 'transparent'
-                },{
-                    tag: 'param',
-                    name: 'flashvars',
-                    value: 'flvpVideoSource='+path+'&flvpWidth='+w+'&flvpHeight='+h
-                }]
+                children: [
+                    { tag: 'param', name: 'bgcolor', value: 'FFFFFF' },
+                    { tag: 'param', name: 'menu', value: 'true' },
+                    { tag: 'param', name: 'allowfullscreen', value: 'true' },
+                    { tag: 'param', name: 'wmode', value: 'transparent' },
+                    {
+                        tag: 'param',
+                        name: 'flashvars',
+                        value: 'flvpVideoSource='+path+'&flvpWidth='+w+'&flvpHeight='+h
+                    }
+                ]
             });
             return vid;
         },
@@ -147,9 +137,9 @@
         getProportionalSize: function(w, h) {
             var h_ratio = h/w,
                 w_ratio = w/h;
-            var pad = 200,
-                myWidth = this.body.getSize().width - pad,
-                myHeight = this.body.getSize().height;
+            var hpad = 200, vpad = 50,
+                myWidth = this.body.getSize().width - hpad,
+                myHeight = this.body.getSize().height - vpad;
             var width, height;
             if (w > h) {
                 width = myWidth;

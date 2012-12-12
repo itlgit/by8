@@ -53,33 +53,26 @@ var my = by8.extend('by8.ui.Panel', by8.ui.Container, {
         this.ct = this.body = new by8.Element(this.bwrap.query(':first')[0]);
     },
     
-    render: function() {
-        my.superclass.render.apply(this, arguments);
-        
-        /*
-         * Set the initial size of bwrap, taking into account the header.
-         */
-        var bwrapWidth = this.bwrap.dom.clientWidth/2,
-            offsetLeft = this.body.dom.offsetLeft,
-            parentWidth = this.el.dom.clientWidth;
-        var bwrapHeight = this.bwrap.dom.clientHeight/2,
-            offsetTop = this.body.dom.offsetTop,
-            parentHeight = this.el.dom.clientHeight;
-        this.frameSize = {
-            w: offsetLeft+bwrapWidth,
-            h: offsetTop+bwrapHeight
-        };
-        var newHeight = parentHeight - this.frameSize.h;
-        if (newHeight < 1) {
-            newHeight = 'auto';
+    getFrameHeight: function() {
+        var el = this.body.dom,
+            offsetHeight = 0;
+        while (el !== this.el.dom) {
+            offsetHeight += el.offsetTop;
+            el = el.parentNode;
         }
-        this.body.setSize(undefined, newHeight);
+        return offsetHeight;
     },
     
     setSize: function(w, h) {
         my.superclass.setSize.call(this, w, h);
-        if (this.body) {
-            this.body.setSize(undefined, h - this.frameSize.h);
+        if (this.rendered && this.body) {
+            /*
+             * Get Panel's overall size, calculate body size
+             */
+            var elSize = this.el.getSize();
+            var adjustedHeight = elSize.height - this.getFrameHeight();
+            console.debug('Panel:'+this.id+' resizing body to '+elSize.width+'x'+adjustedHeight);
+            this.body.setSize(elSize.width, adjustedHeight);
         }
     },
     

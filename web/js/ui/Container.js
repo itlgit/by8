@@ -55,12 +55,7 @@ var my = by8.extend('by8.ui.Container', by8.ui.Component, {
     render: function() {
         my.superclass.render.apply(this, arguments);
         
-        /*
-         * If layout isn't hooked up to its container yet (us)
-         */
-        if (!this.layout.container) {
-            this.layout.setContainer(this);
-        }
+        this.layout.setContainer(this);
         this.layout.doLayout();
     },
     
@@ -120,8 +115,16 @@ var my = by8.extend('by8.ui.Container', by8.ui.Component, {
      * @param h
      */
     setSize: function(w, h) {
+        /*
+         * Set our overall size
+         */
         my.superclass.setSize.call(this, w, h);
-        this.fireEvent('resize', [w, h]);
+        /*
+         * But tell children the size of ct
+         */
+        var ct = this.ct || this.el;
+        var ctSize = ct.getSize();
+        this.fireEvent('resize', [ctSize.width, ctSize.height]);
     }
 });
 })();

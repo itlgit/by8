@@ -128,6 +128,13 @@ body {
 .by8-comp .card-layout {
     position: relative;
 }
+.by8-comp .card-layout > .by8-comp {
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+}
 .by8-comp .flow-layout > * {
     float: left;
 }

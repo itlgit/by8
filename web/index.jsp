@@ -26,10 +26,6 @@ var urlPrefix = "<%=prefix%>";
     <script type="text/javascript" src="js/album/init.js"></script>
 <% } %>
 
-<div id="header">
-<span class="surname"><span class="f">N</span>guyen</span> Family Album
-</div>
-
 <div id="body"></div>
 
 </body>
