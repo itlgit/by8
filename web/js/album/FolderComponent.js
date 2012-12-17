@@ -7,10 +7,17 @@
         init: function(config) {
             my.superclass.init.call(this, config);
             if (this.thumb) {
-                this.el.update(
-                    '<img src="'+window.urlPrefix+this.thumb+'">'
-                );
+                this.el.createChild({
+                    tag: 'img',
+                    src: window.urlPrefix+this.thumb
+                });
             }
+            var lastSlash = this.path.lastIndexOf('/')+1;
+            this.el.createChild({
+                tag: 'span',
+                css: 'text',
+                html: this.path.substring(lastSlash || 0)
+            });
         }
     });
 })();

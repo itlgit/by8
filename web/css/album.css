@@ -79,11 +79,22 @@
 .folder-comp {
     width: 100px;
     height: 100px;
-    border: 3px dashed #999;
     margin: 20px;
     cursor: pointer;
     overflow: hidden;
     text-align: center;
+    position: relative;
+}
+.folder-comp > .text {
+    position: absolute;
+    left: 0;
+    bottom: 50%;
+    width: 100%;
+}
+.folder-comp.dir {
+    width: 133px;
+    background: transparent url(images/folder.png)  0 0 no-repeat scroll;
+    background-size: 133px 100px;
 }
 .breadcrumb {
     cursor: pointer;

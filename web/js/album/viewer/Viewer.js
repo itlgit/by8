@@ -1,7 +1,7 @@
 (function() {
-    by8.require('by8.ui.Window');
+    var Window = by8.require('by8.ui.Window');
     
-    var my = by8.extend('by8.album.viewer.Viewer', by8.ui.Window, {
+    var my = by8.extend('by8.album.viewer.Viewer', Window, {
         closeAction: 'invisible',
         
         init: function(config) {
@@ -26,7 +26,12 @@
             this.prevButton.on('click', by8.proxy(this.previous, this));
             this.nextButton.on('click', by8.proxy(this.next, this));
             
-            this.on(this.closeAction, this.clearView, this);
+            this.on(this.closeAction, function() {
+                /*
+                 * Delay 500ms to coincide with CSS fade out transition
+                 */
+                by8.defer(this.clearView, 500, this);
+            }, this);
             this.on('windowresized', this.setSize, this);
         },
         
@@ -41,40 +46,14 @@
             return img;
         },
         
-        /**
-         * Supported aspect ratios of the player, multiplied x100 to avoid
-         * precision mismatch.
-         */
-        aspectRatios: {
-            '100': '1:1',
-            '150': '3:2',
-            '133': '4:3',
-            '125': '5:4',
-            '155': '14:9',
-            '140': '14:10',
-            '177': '16:9',
-            '160': '16:10'
-        },
-        
-        getAspectRatio: function(w, h) {
-            var ratio = String((w/h)*100).substring(0, 3),
-                aspect = this.aspectRatios[ratio];
-            by8.each(this.aspectRatios, function(ar, dec) {
-                dec = Number(dec);
-                if (Math.abs(dec - Number(ratio)) <= 10) {
-                    aspect = ar;
-                    return false;
-                }
-            });
-            return aspect;
-        },
-        
         createVideo: function(thumb, path, w, h) {
             var flowplayer = by8.require('flowplayer');
             
+            var viewWidth = this.view.getSize().width,
+                leftOffset = (viewWidth - w)/2;
             var vid = this.view.createChild({
                 css: 'video-container',
-                style: 'width:'+w+'px;height:'+h+'px'
+                style: 'width:'+w+'px;height:'+h+'px;left:'+leftOffset+'px'
             });
             flowplayer(vid.id, 'flvplayer/flowplayer-3.2.15.swf', {
                 clip: {

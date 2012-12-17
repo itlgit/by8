@@ -61,8 +61,9 @@
             fullPath = fullPath.join('/');
             
             by8.require('by8.album.BreadCrumb');
+            var lastSlash = path.lastIndexOf('/')+1;
             var crumb = new by8.album.BreadCrumb({
-                html: path.substring(fullPath.length),
+                html: path.substring(lastSlash || 0),
                 path: path,
                 listeners: {
                     click: function(comp) {
@@ -84,7 +85,7 @@
                 FolderComponent = by8.require('by8.album.FolderComponent');
             by8.each(directories, function(dir) {
                 var item = new FolderComponent({
-                    html: dir,
+                    css: 'folder-comp dir',
                     path: dir,
                     listeners: {
                         click: function(comp) {
@@ -101,7 +102,6 @@
                 FolderComponent = by8.require('by8.album.FolderComponent');
             by8.each(files, function(file) {
                 var item = new FolderComponent({
-                    html: file.lg,
                     path: file.lg,
                     thumb: file.tn,
                     width: file.w,
