@@ -7,28 +7,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class FileCompilerServlet extends HttpServlet {
+public class FileCompilerFilter implements Filter {
     /**
      * 
      */
-    private static final long serialVersionUID = -6895001037403713052L;
     private ServletContext servletContext;
-    private int contextOffset;
     
     private final String dateFormat = "EEE, dd MMM yyyy kk:mm:ss zzz";
     
     private HashMap<String,ContentWorker> workers;
     
     @Override
-    public void init(ServletConfig servletConfig) {
-        servletContext = servletConfig.getServletContext();
-        contextOffset = servletContext.getServletContextName().length() + 1;
+    public void init(FilterConfig filterConfig) {
+        servletContext = filterConfig.getServletContext();
         
         workers = new HashMap<String,ContentWorker>(2);
         workers.put("js", new JavaScriptContentWorker(new File(servletContext.getRealPath("/"))));
@@ -36,14 +37,18 @@ public class FileCompilerServlet extends HttpServlet {
     }
 
     @Override
-    public void service(HttpServletRequest request, HttpServletResponse response) {
+    public void doFilter(ServletRequest req, ServletResponse res,
+            FilterChain chain) throws IOException, ServletException {
         
-        /*
-         * Get the real file path minus the context and servlet names
-         */
-//        int pathOffset = contextOffset + request.getServletPath().length() + 1;
-//        String filename = request.getRequestURI().substring(pathOffset);
-        String filename = request.getRequestURI();
+        if (!"true".equals(req.getParameter("compiled"))) {
+            chain.doFilter(req, res);
+            return;
+        }
+        
+        HttpServletRequest request = (HttpServletRequest)req;
+        HttpServletResponse response = (HttpServletResponse)res;
+        String contextPath = request.getContextPath();
+        String filename = request.getRequestURI().substring(contextPath.length());
         String extension = getFileExtension(filename);
         String addlModule = request.getParameter("m");
         ContentWorker worker = workers.get(extension);
@@ -91,4 +96,11 @@ public class FileCompilerServlet extends HttpServlet {
         int dot = filename.lastIndexOf('.');
         return filename.substring(dot+1);
     }
+
+    @Override
+    public void destroy() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
