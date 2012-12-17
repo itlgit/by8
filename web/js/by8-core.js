@@ -2,6 +2,7 @@
  * ByEight.com JavaScript library
  */
 globalEval = function(content) {
+//    return eval.apply(window, arguments);
     return eval(content);
 };
 (function() {
@@ -259,6 +260,12 @@ globalEval = function(content) {
          * @returns {String} The path to download the module source
          */
         getPathFromModule: function(module) {
+            /*
+             * Explicit file name, just return it
+             */
+            if (module.match(/\.js$/)) {
+                return modulePaths.defaultPath+module;
+            }
             /*
              * Remove "by8" namespace since appcontext serves that purpose
              */

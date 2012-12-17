@@ -25,7 +25,7 @@ by8.mixin(by8, {
             by8(this.dom).unbind(eventName, callback);
         },
         attr: function(key, val) {
-            if (!val) {
+            if (val === undefined) {
                 return this.dom.getAttribute(key);
             }
             this.dom.setAttribute(key, val);
@@ -38,10 +38,24 @@ by8.mixin(by8, {
                 this.setStyle('top', y+'px');
             }
         },
-        getSize: function() {
+        /**
+         * Gets the Element's containment size, i.e., the space it has to contain
+         * other elements.
+         * @param overall If the overall size (including padding, margin, etc)
+         * should be included in the size.
+         * @returns {___anonymous1245_1352}
+         */
+        getSize: function(overall) {
+            if (overall) {
+                return {
+                    width: by8(this.dom).outerWidth(),
+                    height: by8(this.dom).outerHeight()
+                };
+            }
             return {
-                width: this.dom.clientWidth || 0,
-                height: this.dom.clientHeight || 0};
+                width: by8(this.dom).width(),
+                height: by8(this.dom).height()
+            };
         },
         /**
          * Sets the size of the DOM element.  If 'w' is an object, it should
@@ -109,11 +123,14 @@ by8.mixin(by8, {
         update: function(html) {
             by8(this.dom).html(html);
         },
-        destroy: function() {
-            by8(this.dom).unbind();
+        remove: function() {
             if (this.dom.parentNode) {
                 this.dom.parentNode.removeChild(this.dom);
             }
+        },
+        destroy: function() {
+            by8(this.dom).unbind();
+            this.remove();
         }
     }),
     

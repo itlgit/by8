@@ -17,6 +17,9 @@ public class JavaScriptContentWorker extends AbstractWebContentWorker {
     
     @Override
     protected String getPathFromModule(String module) {
+        if (module.matches("\\.js$")) {
+            return "js/"+module;
+        }
         String path = module.replaceAll("^by8\\.", "").replaceAll("\\.", "/")+".js";
         return "js/"+path;
     }

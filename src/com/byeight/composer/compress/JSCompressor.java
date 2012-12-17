@@ -55,7 +55,7 @@ public class JSCompressor implements Compressor {
                     preserveAllSemiColons = false,
                     disableOptimizations = false,
                     verbose = false;
-            int linebreakpos = 100;
+            int linebreakpos = 80;
             compressor.compress(out, linebreakpos, munge, verbose,
                     preserveAllSemiColons, disableOptimizations);
             out.close();

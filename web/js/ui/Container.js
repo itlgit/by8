@@ -118,12 +118,14 @@ var my = by8.extend('by8.ui.Container', by8.ui.Component, {
         /*
          * Set our overall size
          */
+        console.debug('Container', this.id, 'overall', [w, h]);
         my.superclass.setSize.call(this, w, h);
         /*
          * But tell children the size of ct
          */
         var ct = this.ct || this.el;
         var ctSize = ct.getSize();
+        console.debug('Container', this.id, 'ct', ctSize);
         this.fireEvent('resize', [ctSize.width, ctSize.height]);
     }
 });

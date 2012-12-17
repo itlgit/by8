@@ -53,26 +53,33 @@ var my = by8.extend('by8.ui.Panel', by8.ui.Container, {
         this.ct = this.body = new by8.Element(this.bwrap.query(':first')[0]);
     },
     
-    getFrameHeight: function() {
+    getFrameSize: function() {
         var el = this.body.dom,
-            offsetHeight = 0;
+            height = 0,
+            width = 0;
         while (el !== this.el.dom) {
-            offsetHeight += el.offsetTop;
+            width += el.offsetLeft*2;
+            height += el.offsetTop;
             el = el.parentNode;
         }
-        return offsetHeight;
+        return {width:width, height:height};
     },
     
-    setSize: function(w, h) {
-        my.superclass.setSize.call(this, w, h);
+    setSize: function(newWidth, newHeight) {
+        my.superclass.setSize.call(this, newWidth, newHeight);
         if (this.rendered && this.body) {
             /*
              * Get Panel's overall size, calculate body size
              */
-            var elSize = this.el.getSize();
-            var adjustedHeight = elSize.height - this.getFrameHeight();
-            console.debug('Panel:'+this.id+' resizing body to '+elSize.width+'x'+adjustedHeight);
-            this.body.setSize(elSize.width, adjustedHeight);
+            var frame = this.getFrameSize(),
+                wrapSize = this.bwrap.getSize(true),
+                bodySize = this.body.getSize(true),
+                padWidth = wrapSize.width - bodySize.width,
+                padHeight = wrapSize.height - bodySize.height,
+                elSize = this.el.getSize(),
+                width = elSize.width - padWidth;
+                height = elSize.height - padHeight - frame.height;
+            this.body.setSize(width, height);
         }
     },
     

@@ -23,11 +23,12 @@ by8.ready(function() {
                 title: 'Videos',
                 initialPath: 'videos'
             })
-        ]
-    });
-    by8.fly(window).on('resize', function(e) {
-        var w = by8(e.target).innerWidth();
-        var h = by8(e.target).innerHeight();
-        n.setSize(w - padding, h - padding);
+        ],
+        listeners: {
+            windowresized: function(w, h) {
+                this.setSize(w - padding, h - padding);
+            },
+            scope: n
+        }
     });
 });

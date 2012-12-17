@@ -43,10 +43,10 @@
     text-align: center;
 }
 #viewer .body .view {
-    text-align: center;
+    position: relative;
 }
-#viewer .view > img,
-#viewer .view > video {
+.view .video-container {
+    position: relative;
 }
 #viewer .view > .nav {
     color: #999;
@@ -55,6 +55,7 @@
     font-size: 7em;
     opacity: 0.5;
     cursor: pointer;
+    z-index: 1;
     -moz-transition: opacity 0.2s linear;
     -webkit-transition: opacity 0.2s linear;
     -o-transition: opacity 0.2s linear;

@@ -16,9 +16,6 @@
                 html: '<',
                 title: 'Previous'
             });
-            this.img = this.view.createChild({
-                tag: 'img'
-            });
             this.nextButton = this.view.createChild({
                 tag: 'span',
                 css: 'nav next',
@@ -30,6 +27,7 @@
             this.nextButton.on('click', by8.proxy(this.next, this));
             
             this.on(this.closeAction, this.clearView, this);
+            this.on('windowresized', this.setSize, this);
         },
         
         createImage: function(thumb, path, w, h) {
@@ -43,25 +41,50 @@
             return img;
         },
         
+        /**
+         * Supported aspect ratios of the player, multiplied x100 to avoid
+         * precision mismatch.
+         */
+        aspectRatios: {
+            '100': '1:1',
+            '150': '3:2',
+            '133': '4:3',
+            '125': '5:4',
+            '155': '14:9',
+            '140': '14:10',
+            '177': '16:9',
+            '160': '16:10'
+        },
+        
+        getAspectRatio: function(w, h) {
+            var ratio = String((w/h)*100).substring(0, 3),
+                aspect = this.aspectRatios[ratio];
+            by8.each(this.aspectRatios, function(ar, dec) {
+                dec = Number(dec);
+                if (Math.abs(dec - Number(ratio)) <= 10) {
+                    aspect = ar;
+                    return false;
+                }
+            });
+            return aspect;
+        },
+        
         createVideo: function(thumb, path, w, h) {
+            var flowplayer = by8.require('flowplayer');
+            
             var vid = this.view.createChild({
-                tag: 'object',
-                data: 'FlvPlayer.swf',
-                type: 'application/x-shockwave-flash',
-                style: 'visibility:visible;background:transparent url("'+thumb+'") 0 0 no-repeat scroll;background-size:'+w+'px '+h+'px',
-                width: w,
-                height: h,
-                children: [
-                    { tag: 'param', name: 'bgcolor', value: 'FFFFFF' },
-                    { tag: 'param', name: 'menu', value: 'true' },
-                    { tag: 'param', name: 'allowfullscreen', value: 'true' },
-                    { tag: 'param', name: 'wmode', value: 'transparent' },
-                    {
-                        tag: 'param',
-                        name: 'flashvars',
-                        value: 'flvpVideoSource='+path+'&flvpWidth='+w+'&flvpHeight='+h
-                    }
-                ]
+                css: 'video-container',
+                style: 'width:'+w+'px;height:'+h+'px'
+            });
+            flowplayer(vid.id, 'flvplayer/flowplayer-3.2.15.swf', {
+                clip: {
+                    autoPlay: true,
+                    autoBuffering: true
+                },
+                playlist: [ path ],
+                onFinish: function() {
+                    console.debug('playback finished');
+                }
             });
             return vid;
         },
@@ -98,23 +121,22 @@
                 viewSize = this.getProportionalSize(file.w, file.h);
             
             var lgPath = window.urlPrefix+file.lg,
-                tnPath =window.urlPrefix+file.tn;
-            var fileEl = undefined;
-            if (file.type === 'image') {
-                fileEl = this.createImage(tnPath, lgPath, viewSize.width, viewSize.height);
-            } else {
-                fileEl = this.createVideo(tnPath, lgPath, viewSize.width, viewSize.height);
-            }
+                tnPath = window.urlPrefix+file.tn;
+            
             this.clearView();
-            this.view.appendChild(fileEl);
+            if (file.type === 'image') {
+                this.fileEl = this.createImage(tnPath, lgPath, viewSize.width, viewSize.height);
+            } else {
+                this.fileEl = this.createVideo(tnPath, lgPath, viewSize.width, viewSize.height);
+            }
+            this.view.appendChild(this.fileEl);
             this.visible();
         },
         
-        /**
-         * Removes the image/video from the viewer
-         */
         clearView: function() {
-            this.view.query('img,object').remove();
+            if (this.fileEl) {
+                this.fileEl.destroy();
+            }
         },
         
         findFile: function(path) {

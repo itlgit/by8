@@ -46,11 +46,14 @@
         
         onContainerResize: function(w, h) {
             my.superclass.onContainerResize.call(this, w, h);
-//            var ctId = this.container.id;
-//            by8.each(this.container.children, function(c) {
-//                console.debug('CardLayout:'+ctId+'.'+c.id+' resizing to '+w+'x'+h);
-//                c.setSize(w, h);
-//            });
+            
+            var cSize = this.container.ct.getSize();
+            w = cSize.width;
+            h = cSize.height;
+            by8.each(this.container.children, function(c) {
+                console.debug('CardLayout', c.id, [w, h]);
+                c.setSize(w, h);
+            });
         }
     });
 })();

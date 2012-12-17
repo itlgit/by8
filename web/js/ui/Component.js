@@ -73,6 +73,9 @@
         },
         
         destroy: function() {
+            if (this.windowResizeDelegate) {
+                by8.fly(window).un('resize', this.windowResizeDelegate);
+            }
             this.el.destroy();
             by8.removeComp(this.id);
             my.superclass.destroy.call(this);
@@ -157,17 +160,39 @@
         },
         
         /**
+         * @override
+         * @param event
+         * @param callback
+         * @param scope
+         */
+        on: function(event, callback, scope) {
+            /*
+             * Intercept "windowresize" to relay nav window resize
+             */
+            if (event === 'windowresized') {
+                if (!this.windowResizeDelegate) {
+                    this.windowResizeDelegate = by8.proxy(function(evt) {
+                        var size = by8.fly(evt.target).getSize();
+                        this.fireEvent('windowresized', [size.width, size.height]);
+                    }, this);
+                    by8.fly(window).on('resize', this.windowResizeDelegate);
+                }
+            }
+            return my.superclass.on.apply(this, arguments);
+        },
+        
+        /**
          * Managed-on.  Relay event handler to backing Element.
          * @param event
          * @param callback
          * @param scope
          */
         mon: function(event, callback, scope) {
-            this.el.on.apply(this.el, arguments);
+            return this.el.on.apply(this.el, arguments);
         },
         
         mun: function(event, callback, scope) {
-            this.el.un.apply(this.el, arguments);
+            return this.el.un.apply(this.el, arguments);
         },
         
         setPosition: function(x, y) {
