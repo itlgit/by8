@@ -88,8 +88,11 @@
 .folder-comp > .text {
     position: absolute;
     left: 0;
-    bottom: 50%;
+    bottom: 0;
     width: 100%;
+}
+.folder-comp.dir > .text {
+    bottom: 50%;
 }
 .folder-comp.dir {
     width: 133px;

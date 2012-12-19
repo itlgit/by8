@@ -6,15 +6,16 @@ compiled = compiled || "true".equals(request.getParameter("compiled"));
 String prefix = request.getServerName().matches("aeon|byeight") ? "/" : "http://www.byeight.com/";
 
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Nguyen Family Album - <%= request.getLocalName() %></title>
-<link rel="stylesheet" href="/byeight/css/album.css?compiled=<%=compiled%>"/>
-<script type="text/javascript">
-var urlPrefix = "<%=prefix%>";
-</script>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5" />
+    <title>Nguyen Family Album - <%= request.getLocalName() %></title>
+    <link rel="stylesheet" href="/byeight/css/album.css?compiled=<%=compiled%>"/>
+    <script type="text/javascript">
+    var urlPrefix = "<%=prefix%>";
+    </script>
 </head>
 
 <body>
