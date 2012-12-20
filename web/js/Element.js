@@ -18,6 +18,21 @@ by8.mixin(by8, {
                 id: element.id
             });
         },
+        /**
+         * Gets the value of the property named by <code>prop</code>
+         * @param prop
+         */
+        get: function(prop) {
+            return this.dom[prop];
+        },
+        /**
+         * Set the value of the property named by <code>prop</code>
+         * @param prop
+         * @param val
+         */
+        set: function(prop, val) {
+            this.dom[prop] = val;
+        },
         on: function(eventName, callback) {
             by8(this.dom).bind(eventName, callback);
         },
