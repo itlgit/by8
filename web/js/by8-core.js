@@ -104,6 +104,18 @@ globalEval = function(content) {
         },
         
         /**
+         * Create an interval to run the callback.  This function calls the
+         * callback right away and then uses setInterval for subsequent calls.
+         * @param {Function} callback
+         * @param {Number} interval
+         * @return {Number} The setInterval identifier
+         */
+        setInterval: function(callback, interval) {
+            callback();
+            return setInterval(callback, interval);
+        },
+        
+        /**
          * Loop through the array and run the callback for each item.
          * @param {Array} items The array through which to loop.
          * @param {Function} callback The callback function which will be called once
@@ -264,7 +276,7 @@ globalEval = function(content) {
              * Explicit file name, just return it
              */
             if (module.match(/\.js$/)) {
-                return modulePaths.defaultPath+module;
+                return module;
             }
             /*
              * Remove "by8" namespace since appcontext serves that purpose

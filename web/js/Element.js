@@ -179,8 +179,11 @@ by8.mixin(by8, {
             this.flyweight = new this.Element(element);
             delete this.flyweight.id;
         }
-        this.flyweight.dom = this(element)[0];
-        return this.flyweight;
+        var dom = this(element)[0];
+        if (dom) {
+            this.flyweight.dom = this(element)[0];
+            return this.flyweight;
+        }
     },
     
     /**
