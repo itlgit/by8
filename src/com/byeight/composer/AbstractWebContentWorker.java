@@ -15,8 +15,9 @@ import com.byeight.composer.compress.Compressor;
 
 public abstract class AbstractWebContentWorker implements ContentWorker {
 
-    private Pattern requiresPattern = Pattern.compile("by8\\.require\\(['\"]([\\w\\.-]*)['\"]");
-    private Pattern includePattern = Pattern.compile("by8\\.include\\(['\"]([\\w\\.-]*)['\"]");
+    private String matchPattern = "\\(['\"]([-\\w\\.\\/]*)['\"]";
+    private Pattern requiresPattern = Pattern.compile("by8\\.require"+matchPattern);
+    private Pattern includePattern = Pattern.compile("by8\\.include"+matchPattern);
 
     private final String compiledSuffix = "-compiled";
     private File parentDir;
@@ -105,17 +106,20 @@ public abstract class AbstractWebContentWorker implements ContentWorker {
         String source = readFile(sourcePath);
         
         /*
-         * First, find by8.requires() statements; push into first item of list
+         * First, find by8.requires() statements; push into separate array which
+         * will be prepended to final deps array.
          */
         Matcher m = requiresPattern.matcher(source);
+        ArrayList<String> requiresArray = new ArrayList<String>(m.groupCount());
         while (m.find()) {
             String depPath = getPathFromModule(m.group(1));
-            deps.add(0, depPath);
+            requiresArray.add(depPath);
             List<String> nestedDeps = getDependencies(depPath);
             if (nestedDeps.size() > 1) {
-                deps.addAll(0, nestedDeps.subList(0, nestedDeps.size()-1));
+                requiresArray.addAll(0, nestedDeps.subList(0, nestedDeps.size()-1));
             }
         }
+        deps.addAll(0, requiresArray);
         
         /*
          * Next, find by8.include() statements; add to end of list
