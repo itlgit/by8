@@ -25,6 +25,8 @@
     -webkit-transition: opacity 0.5s linear;
     -o-transition: opacity 0.5s linear;    
     opacity: 1.0;
+    left: 0;
+    top: 0;
 }
 #viewer.by8-invisible {
     -moz-transition: visibility 0s linear 0.5s, opacity 0.5s linear;
