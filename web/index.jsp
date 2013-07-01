@@ -1,8 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%
-boolean compiled = !"localhost".equals(request.getServerName());
-compiled = compiled || "true".equals(request.getParameter("compiled"));
+boolean compiled = !"localhost".equals(request.getServerName())
+    || "true".equals(request.getParameter("compiled"));
+boolean requestDebug = "false".equals(request.getParameter("compiled"));
+compiled = compiled && !requestDebug;
+String proxyTarget = System.getProperty("manifest.proxy.target");
+if (proxyTarget == null) {
+    proxyTarget = "";
+}
 String prefix = request.getServerName().matches("aeon|byeight") ? "/" : "http://www.byeight.com/";
 
 %>
@@ -14,7 +20,7 @@ String prefix = request.getServerName().matches("aeon|byeight") ? "/" : "http://
     <title>Nguyen Family Album - <%= request.getLocalName() %></title>
     <link rel="stylesheet" href="/byeight/css/album.css?compiled=<%=compiled%>"/>
     <script type="text/javascript">
-    var urlPrefix = "<%=prefix%>";
+    var urlPrefix = "<%=proxyTarget%>/";
     </script>
 </head>
 
