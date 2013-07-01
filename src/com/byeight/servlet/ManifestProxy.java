@@ -35,7 +35,7 @@ public class ManifestProxy extends HttpServlet {
     public void init(ServletConfig config) {
         String proxyTarget = System.getProperty("manifest.proxy.target");
         if (proxyTarget == null || "".equals(proxyTarget)) {
-            proxyTarget = "http://www.byeight.com";
+            proxyTarget = "http://localhost";
         }
         this.proxyTarget = proxyTarget;
     }

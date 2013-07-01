@@ -7,7 +7,7 @@ boolean requestDebug = "false".equals(request.getParameter("compiled"));
 compiled = compiled && !requestDebug;
 String proxyTarget = System.getProperty("manifest.proxy.target");
 if (proxyTarget == null) {
-    proxyTarget = "";
+    proxyTarget = "http://"+request.getServerName();
 }
 String prefix = request.getServerName().matches("aeon|byeight") ? "/" : "http://www.byeight.com/";
 
