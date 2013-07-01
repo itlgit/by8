@@ -267,7 +267,8 @@ globalEval = function(content) {
         
         /**
          * Convert a module name, such as "by8.Element" to a file path from where
-         * the source can be downloaded.
+         * the source can be downloaded.  If the module ends in ".js", then it's
+         * assumed to name an explicit file, and is returned as-is.
          * @param module The fully-qualified element name
          * @returns {String} The path to download the module source
          */
@@ -422,8 +423,10 @@ globalEval = function(content) {
         }
     });
 
-    by8.require('jQuery');
+    by8.require('js/jquery-1.10.1.js');
+    by8.require('js/jquery.mobile-1.3.1.js');
     $ = jQuery.noConflict(true);
+    
     by8.include('by8.Element');
     by8.include('by8.Console');
 })();
