@@ -1,4 +1,4 @@
 <project name="byeight" default="compile" basedir=".">
-	<property name="app.name" value="byeight"/>
+	<property name="app.name" value="album"/>
 	<import file="../common-build.xml"/>
 </project>

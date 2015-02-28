@@ -1,2 +1,12 @@
-.scroller {
+body {
+    padding-top: 50px;
+}
+
+.byeight-template {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+img.thumbnail {
+    display: inline;
 }

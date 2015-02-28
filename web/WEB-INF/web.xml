@@ -1,48 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
     <display-name>byeight</display-name>
-    <!-- <listener> <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> 
-        </listener> -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext.xml</param-value>
-    </context-param>
-    <servlet>
-        <servlet-name>dwr-invoker</servlet-name>
-        <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
-        <init-param>
-            <param-name>debug</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </servlet>
-    <servlet>
-        <servlet-name>ManifestProxy</servlet-name>
-        <servlet-class>com.byeight.servlet.ManifestProxy</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>dwr-invoker</servlet-name>
-        <url-pattern>/dwr/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ManifestProxy</servlet-name>
-        <url-pattern>*.json</url-pattern>
-    </servlet-mapping>
     <filter>
-        <filter-name>FileCompiler</filter-name>
-        <filter-class>com.byeight.composer.FileCompilerFilter</filter-class>
+        <display-name>ManifestFilter</display-name>
+        <filter-name>ManifestFilter</filter-name>
+        <filter-class>com.byeight.proxy.ManifestFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>FileCompiler</filter-name>
-        <url-pattern>*.css</url-pattern>
+        <filter-name>ManifestFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>FileCompiler</filter-name>
-        <url-pattern>*.js</url-pattern>
-    </filter-mapping>
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
 </web-app>
