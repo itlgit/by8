@@ -9,13 +9,13 @@ public class Manifest {
 
     public List<String> getDirectories() {
         if (directories == null) {
-            directories = new ArrayList<String>();
+            directories = new ArrayList<>();
         }
         return directories;
     }
     public List<Image> getImages() {
         if (images == null) {
-            images = new ArrayList<Image>();
+            images = new ArrayList<>();
         }
         return images;
     }

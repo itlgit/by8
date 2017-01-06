@@ -1,4 +1,92 @@
-<project name="byeight" default="compile" basedir=".">
-	<property name="app.name" value="album"/>
-	<import file="../common-build.xml"/>
+<project name="album" default="compile" basedir=".">
+	<property name="app.name" value="${ant.project.name}"/>
+	<property name="web.dir" value="${basedir}/web"/>
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="tomcat.dir" value="../../../Library/Apache/apache-tomcat-6.0.20"/>
+	<property name="ext.lib.dir" value="${tomcat.dir}"/>
+	<property name="web.lib.dir" value="${web.dir}/WEB-INF/lib"/>
+	<property name="app.jar" value="${web.lib.dir}/${app.name}.jar"/>
+	<property name="build.dir" value="${basedir}/build/classes"/>
+	<property name="dist.dir" value="${basedir}/dist"/>
+	<property name="class.dir" value="${build.dir}"/>
+	<property name="debug" value="true"/>
+
+	<path id="depend.classpath">
+		<fileset dir="${ext.lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<path id="build.classpath">
+		<path refid="depend.classpath"/>
+		<fileset dir="${web.lib.dir}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+		<delete file="${app.jar}"/>
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${class.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${class.dir}" debug="${debug}">
+			<classpath refid="build.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="copy-resources">
+		<copy todir="${class.dir}">
+			<fileset dir="${src.dir}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="jar" depends="compile,copy-resources">
+		<jar basedir="${class.dir}" destfile="${app.jar}">
+			<manifest>
+				<attribute name="Built-By" value="itlogo@gmail.com"/>
+				<section name="common">
+					<attribute name="Implementation-Title" value="${app.name}"/>
+					<attribute name="Implementation-Version" value="2.5"/>
+					<attribute name="Implementation-Vendor" value="ByEight.com"/>
+				</section>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="war" depends="jar">
+		<mkdir dir="${dist.dir}"/>
+		<war basedir="${web.dir}" destfile="${dist.dir}/${app.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+			<manifest>
+				<attribute name="Built-By" value="itlogo@gmail.com"/>
+				<section name="common">
+					<attribute name="Implementation-Title" value="${app.name}"/>
+					<attribute name="Implementation-Version" value="2.5"/>
+					<attribute name="Implementation-Vendor" value="ByEight.com"/>
+				</section>
+			</manifest>
+		</war>
+	</target>
+	
+	<target name="dist" depends="war">
+		<copy todir="${dist.dir}/temp/${app.name}/appserver/webapps" file="${dist.dir}/${app.name}.war"/>
+		<tar destfile="${dist.dir}/${app.name}.tar.bz2" compression="bzip2">
+			<tarfileset dir="${dist.dir}/temp">
+				<include name="**/*"/>
+				<exclude name="**/*.sh"/>
+			</tarfileset>
+			<tarfileset dir="${dist.dir}/temp" mode="755">
+				<include name="**/*.sh"/>
+			</tarfileset>
+		</tar>
+		<delete dir="${dist.dir}/temp"/>
+	</target>
+	
+	<target name="all">
+		<antcall target="dist"/>
+	</target>	
 </project>

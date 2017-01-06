@@ -15,6 +15,9 @@
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
+<link rel="stylesheet" type="text/css" href="/album/scripts/slick/slick.css">
+<link rel="stylesheet" type="text/css" href="/album/scripts/slick/slick-theme.css">
+
 <!-- Our own content -->
 <link rel="stylesheet" href="/album/css/byeight.css">
 
@@ -39,33 +42,40 @@
                     {NAVIGATOR}
                 </ul>
             </div>
-            <!--/.nav-collapse -->
         </div>
     </nav>
 
     <div class="container">
 
         <div class="byeight-template">
-            <h1>Nguyen Family</h1>
+            <h1>Nguyen Family Album</h1>
             <p class="lead">
             {CURRENT}
             </p>
             <p class="lead">
-            {IMAGES}
-            </p>
-            <p class="lead">
             {DIRECTORIES}
+            </p>
+            <p class="lead images">
+            {IMAGES}
             </p>
         </div>
 
     </div>
-    <!-- /.container -->
+    
+    <div class="preview">
+        <div class="body"></div>
+        <button class="close"></button>
+    
+        <footer class="footer">
+            <div class="container">
+                <p class="text"/>
+            </div>
+        </footer>
+    </div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Script bootstrap -->
+    <script src="/album/scripts/require.js" data-main="/album/scripts/byeight"></script>
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </body>
 </html>
 

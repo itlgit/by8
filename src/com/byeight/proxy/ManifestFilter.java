@@ -9,8 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -35,8 +35,10 @@ public class ManifestFilter implements Filter {
     private String proxyTarget;
     private String aeon = "http://aeon/";
 
+    private Pattern typeTest = Pattern.compile(".*\\.mp4$", Pattern.CASE_INSENSITIVE);
+
     /**
-     * Default constructor. 
+     * Default constructor.
      */
     public ManifestFilter() {
         // TODO Auto-generated constructor stub
@@ -45,6 +47,7 @@ public class ManifestFilter implements Filter {
     /**
      * @see Filter#init(FilterConfig)
      */
+    @Override
     public void init(FilterConfig fConfig) throws ServletException {
         servletContext = fConfig.getServletContext();
         String proxyTarget = System.getProperty("manifest.proxy.target");
@@ -57,33 +60,35 @@ public class ManifestFilter implements Filter {
 	/**
 	 * @see Filter#destroy()
 	 */
-	public void destroy() {
+	@Override
+    public void destroy() {
 		// TODO Auto-generated method stub
 	}
 
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
-	public void doFilter(ServletRequest freq, ServletResponse fresp, FilterChain chain) throws IOException, ServletException {
+	@Override
+    public void doFilter(ServletRequest freq, ServletResponse fresp, FilterChain chain) throws IOException, ServletException {
 	    HttpServletRequest request = (HttpServletRequest)freq;
 	    String requestURI = request.getRequestURI();
-	    
+
 	    if (!requestURI.endsWith("/")) {
 	        chain.doFilter(freq, fresp);
 	        return;
 	    }
-	    
+
         String origPath = request.getRequestURI();
         String contextPath = request.getContextPath();
         origPath = origPath.substring(contextPath.length()+1);
-        
+
         PrintWriter writer = fresp.getWriter();
         Manifest manifest = get(origPath);
         StringBuffer nav = getNavigatorHtml(origPath);
         StringBuffer dirs = getDirectoryHtml(manifest.getDirectories(), origPath);
         StringBuffer imgs = getImagesHtml(manifest.getImages(), origPath);
         writer.write(makeIndexContent(requestURI, nav, dirs, imgs));
-	    
+
 	}
 
     private Manifest get(String origPath) {
@@ -113,7 +118,7 @@ public class ManifestFilter implements Filter {
         }
         return null;
     }
-    
+
     private String getManifestContent(String origPath) throws IOException {
         URL destURL = new URL(aeon + "thumbs/" + origPath + "manifest.json");
         HttpURLConnection conn = (HttpURLConnection) destURL.openConnection();
@@ -130,7 +135,7 @@ public class ManifestFilter implements Filter {
 
         return buff.toString();
     }
-    
+
     private StringBuffer getDirectoryHtml(List<String> items, String prefix) {
         StringBuffer buffer = new StringBuffer();
         for (int i=0,len=items.size(); i<len; i++) {
@@ -144,7 +149,7 @@ public class ManifestFilter implements Filter {
         }
         return buffer;
     }
-    
+
     private String makeLink(String prefix, String item) {
         try {
             prefix = URLDecoder.decode(prefix, "UTF-8");
@@ -159,7 +164,7 @@ public class ManifestFilter implements Filter {
         String basename = item.substring(lastSlash+1);
         return "<a href=\""+item+"/\">"+basename+"</a>";
     }
-    
+
     private StringBuffer getImagesHtml(List<Image> images, String origPath) {
         StringBuffer buffer = new StringBuffer();
         for (int i=0,len=images.size(); i<len; i++) {
@@ -169,18 +174,23 @@ public class ManifestFilter implements Filter {
         }
         return buffer;
     }
-    
+
     private String makeLink(String prefix, Image item) {
-        String url = proxyTarget+item.getUrl();
-        String thumb = proxyTarget+item.getThumb();
-        return "<a href=\""+url+"\"><img class=\"thumbnail\" src=\""+thumb+"\"></a>";
+        String url = item.getUrl();
+        String type = typeTest.matcher(url).matches() ? "video" : "image";
+        String thumb = item.getThumb();
+        String fullUrl = proxyTarget+url;
+        String fullThumb = proxyTarget+thumb;
+        return  "<a class=\"thumbnail-link\" data-thumbnail=\""+thumb+"\" data-type=\""+type+"\" href=\""+fullUrl+"\">"+
+                "<img class=\"thumbnail\" src=\""+fullThumb+"\">"+
+                "</a>";
     }
-    
+
     private StringBuffer getNavigatorHtml(String currentPath) {
         StringBuffer html = new StringBuffer();
         String[] paths = currentPath.split("\\/");
         StringBuffer accum = new StringBuffer();
-        
+
         for (int len=paths.length,i=len-1; i>=0; i--) {
             String path = paths[i];
             try {
@@ -200,7 +210,7 @@ public class ManifestFilter implements Filter {
         }
         return html;
     }
-    
+
     private String makeIndexContent(String current, StringBuffer navigator, StringBuffer directories, StringBuffer images) throws IOException {
         StringBuffer html = new StringBuffer();
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/templates/index.html");
