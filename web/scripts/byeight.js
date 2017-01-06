@@ -10,6 +10,41 @@ require([
 
 $.extend(by8, {
     
+    initPreview: function() {
+        var items = $('.preview .slick-item'),
+        body = $('.preview .body');
+        if (!items.length) {
+            /*
+             * If Preview hasn't yet been populated, query all thumbnails
+             * on the page and create a Slick carousel item for them.
+             */
+            var children = document.createDocumentFragment('div');
+            $('.thumbnail').each(function(i) {
+                var src = this.src,
+                img = document.createElement('img');
+                img.className = 'slick-item';
+                img.src = src;
+                children.appendChild(img);
+            });
+            body.append(children);
+            /*
+             * Initialize Slick
+             */
+            body.on('click', by8.toggleControlsVisible);
+            body.on('beforeChange', by8.onBeforeChange);
+            body.on('afterChange', by8.onChange);
+            body.slick({
+                arrows: true,
+                infinite: true,
+                mobileFirst: true
+            });
+            $('.preview .close').on('click', by8.hidePreview);
+            /*
+             * Init PanZoom
+             */
+        }
+    },
+    
     /**
      * Show the Preview window and scroll to the image idenfied by the uri.
      * @param {String} uri
@@ -23,39 +58,12 @@ $.extend(by8, {
         $('.preview').show({
             duration: skipAnim ? 0 : 250,
             complete: function() {
-                var items = $('.preview .slick-item'),
-                body = $('.preview .body');
-                if (!items.length) {
-                    /*
-                     * If Preview hasn't yet been populated, query all thumbnails
-                     * on the page and create a Slick carousel item for them.
-                     */
-                    var children = document.createDocumentFragment('div');
-                    $('.thumbnail').each(function(i) {
-                        var src = this.src,
-                        img = document.createElement('img');
-                        img.className = 'slick-item';
-                        img.src = src;
-                        children.appendChild(img);
-                    });
-                    body.append(children);
-                    
-                    /*
-                     * Initialize Slick
-                     */
-                    body.on('click', by8.toggleControlsVisible);
-                    body.on('beforeChange', by8.onBeforeChange);
-                    body.on('afterChange', by8.onChange);
-                    body.slick({
-                        arrows: true,
-                        infinite: true
-                    });
-                    $('.preview .close').on('click', by8.hidePreview);
-                }
+                by8.initPreview();
                 /*
                  * Find the offset image to which we need to scroll
                  */
-                var offset = body.slick('slickCurrentSlide');
+                var body = $('.preview .body'),
+                offset = body.slick('slickCurrentSlide');
                 $('.thumbnail-link').each(function(i) {
                     if ($(this).data('thumbnail') === uri) {
                         offset = i;
