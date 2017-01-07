@@ -4,19 +4,19 @@ body {
 
 .navbar {
     opacity: 0.75;
-    animation-name: nav-opaque;
+    animation-name: partial-opaque;
     animation-duration: 0.5s;
 }
-@keyframes nav-opaque {
+@keyframes partial-opaque {
     from {opacity: 1.0;}
     to {opacity: 0.75;}
 }
 .navbar:hover {
     opacity: 1.0;
-    animation-name: nav-full;
+    animation-name: full-opaque;
     animation-duration: 0.5s;
 }
-@keyframes nav-full {
+@keyframes full-opaque {
     from {opacity: 0.75;}
     to {opacity: 1.0;}
 }
@@ -25,7 +25,28 @@ body {
     text-align: center;
 }
 
+.thumbnail-link {
+    position: relative;
+}
+.thumbnail-link .fa {
+    color: #FFF;
+    opacity: 0.75;
+    text-shadow: 2px 2px 25px #000;
+    position: absolute;
+    animation-name: partial-opaque;
+    animation-duration: 0.5s;
+}
+.thumbnail-link:hover .fa {
+    opacity: 1.0;
+    animation-name: full-opaque;
+    animation-duration: 0.5s;
+}
+.thumbnail-link .fa-play {
+    left: 0;
+    top: -4px;
+    text-align: center;
+    width: 100%;
+}
 .thumbnail {
     display: inline;
 }
-

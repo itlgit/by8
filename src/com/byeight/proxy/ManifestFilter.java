@@ -79,6 +79,7 @@ public class ManifestFilter implements Filter {
         String contextPath = request.getContextPath();
         origPath = origPath.substring(contextPath.length()+1);
 
+        fresp.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = fresp.getWriter();
         Manifest manifest = get(origPath);
         StringBuffer nav = getNavigatorHtml(origPath);
@@ -189,6 +190,7 @@ public class ManifestFilter implements Filter {
         String fullThumb = proxyTarget+thumb;
         return  "<a class=\"thumbnail-link\" data-thumbnail=\""+thumb+"\" data-type=\""+type+"\" href=\""+fullUrl+"\">"+
                 "<img class=\"thumbnail\" src=\""+fullThumb+"\" width=\""+width+"\" height=\""+height+"\">"+
+                (type == Image.VIDEO_TYPE ? "<i class=\"fa fa-play fa-lg\"></i>" : "")+
                 "</a>";
     }
 

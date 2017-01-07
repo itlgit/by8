@@ -62,7 +62,7 @@ $.extend(by8, {
             by8.initPreview(function(PhotoSwipe, PhotoSwipeUI_Default) {
                 var options = {
                         index: offset,
-                        history: false,
+                        history: true,
                         getImageURLForShare: by8.getImageURLForShare,
                         getThumbBoundsFn: by8.getThumbBoundsFn
                 };
@@ -99,17 +99,12 @@ $.extend(by8, {
     },
 
     /**
-     * Runs after Preview changes slides.  Update the browser's hash with the
-     * one for the current slide.
+     * Runs after Preview changes slides.  Perform operations needed after changing
+     * slides.
      */
     onChange: function() {
-        /*
-         * Update browser hash
-         */
         var index = by8.gallery.getCurrentIndex(),
-        lastIndex = by8.lastIndex,
-        hash = by8.getItemAttr(index, 'data-thumbnail');
-        document.location.hash = hash;
+        lastIndex = by8.lastIndex;
         /*
          * If previous video, stop it before starting the current one.
          */
@@ -129,7 +124,6 @@ $.extend(by8, {
      */
     onGalleryDestroy: function() {
         delete by8.gallery;
-        document.location.hash = '&closed';
         /*
          * Stop current videos
          */
@@ -216,25 +210,26 @@ $(function() {
         if (thumb) {
             var href = this.href;
             $(this).attr('data-url', href);
-            this.href = '#'+thumb;
+            this.href = '#';
+            
+            $(this).on('click', function(e) {
+                /*
+                 * e.target is child of <a>; find <a>
+                 */
+                var link = $(e.target).parent(),
+                uri = link.attr('data-thumbnail');
+                by8.showPreview(uri);
+                e.preventDefault();
+            });
         }
     });
     /*
      * Handle initial load URL with hashes
      */
     var hash = document.location.hash;
-    if (hash && hash.indexOf('&closed') < 0) {
+    if (hash) {
         by8.showPreview(hash.substring(1), true);
     }
-    $(window).on('hashchange', function(e) {
-        var hash = document.location.hash;
-        if (hash && hash.indexOf('&closed') < 0) {
-            by8.showPreview(hash.substring(1), true);
-        }
-        else if (by8.gallery) {
-            by8.gallery.close();
-        }
-    });
 });
 
 });
