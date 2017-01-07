@@ -3,138 +3,104 @@ var by8 = {};
 require([
 //         'https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js',
          'jquery',
-         'slick/slick',
          'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'
          ], function($) {
 
 
 $.extend(by8, {
     
-    initPreview: function() {
-        var items = $('.preview .slick-item'),
-        body = $('.preview .body');
-        if (!items.length) {
-            /*
-             * If Preview hasn't yet been populated, query all thumbnails
-             * on the page and create a Slick carousel item for them.
-             */
-            var children = document.createDocumentFragment('div');
-            $('.thumbnail').each(function(i) {
-                var src = this.src,
-                img = document.createElement('img');
-                img.className = 'slick-item';
-                img.src = src;
-                children.appendChild(img);
+    /**
+     * Initialize the Preview.
+     * @param {Function} callback
+     * The callback function to run when the initialization is complete.
+     */
+    initPreview: function(callback) {
+        if (!this.items) {
+            var items = this.items = [];
+            $('.thumbnail-link').each(function(i) {
+                /*
+                 * Get the thumbnail dimensions and assume the large image height
+                 * is tn*1024.  Calculate width from ratio.
+                 */
+                var w = by8.getItemAttr(i, 'width'),
+                h = by8.getItemAttr(i, 'height'),
+                ratio = h/w,
+                height = 1024,
+                width = Math.round(height/ratio),
+                type = by8.getItemAttr(i, 'data-type'),
+                src = by8.getItemAttr(i, type === 'image' ? 'data-url' : 'src');
+                items.push({
+                    src: src,
+                    w: width,
+                    h: height
+                });
             });
-            body.append(children);
-            /*
-             * Initialize Slick
-             */
-            body.on('click', by8.toggleControlsVisible);
-            body.on('beforeChange', by8.onBeforeChange);
-            body.on('afterChange', by8.onChange);
-            body.slick({
-                arrows: true,
-                infinite: true,
-                mobileFirst: true
-            });
-            $('.preview .close').on('click', by8.hidePreview);
-            /*
-             * Init PanZoom
-             */
         }
+        requirejs(['PhotoSwipe/photoswipe.min',
+                   'PhotoSwipe/photoswipe-ui-default.min'], callback);
     },
     
-    /**
-     * Show the Preview window and scroll to the image idenfied by the uri.
-     * @param {String} uri
-     * The URI of the slide to display
-     * @param {Boolean} skipAnim
-     * True to skip animation of showing Preview
-     */
-    showPreview: function(uri, skipAnim) {
-        $('.lead.images').hide();
-
-        $('.preview').show({
-            duration: skipAnim ? 0 : 250,
-            complete: function() {
-                by8.initPreview();
-                /*
-                 * Find the offset image to which we need to scroll
-                 */
-                var body = $('.preview .body'),
-                offset = body.slick('slickCurrentSlide');
-                $('.thumbnail-link').each(function(i) {
-                    if ($(this).data('thumbnail') === uri) {
-                        offset = i;
-                    }
-                });
-                body.slick('slickGoTo', offset, skipAnim);
-                
+    showPreview: function(uri) {
+        var offset = 0;
+        $('.thumbnail-link').each(function(i) {
+            if ($(this).attr('data-thumbnail') === uri) {
+                offset = i;
             }
         });
+        if (by8.gallery) {
+            by8.gallery.goTo(offset);
+        }
+        else {
+            by8.initPreview(function(PhotoSwipe, PhotoSwipeUI_Default) {
+                var options = {
+                        index: offset,
+                        history: false,
+                        getImageURLForShare: by8.getImageURLForShare,
+                        getThumbBoundsFn: by8.getThumbBoundsFn
+                };
+                var pswpElement = $('.pswp')[0];
+                var gallery = by8.gallery =
+                    new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, by8.items, options);
+                gallery.listen('afterChange', by8.onChange);
+                gallery.listen('destroy', function() {
+                    delete by8.gallery;
+                    document.location.hash += '&closed';
+                });
+                gallery.init();
+            });
+        }
+    },
+
+    getImageURLForShare: function(shareButtonData) {
+        var src = by8.gallery.currItem.src;
+        if (shareButtonData.id === 'download') {
+            src = src.replace(/thumbs\//, '');
+        }
+        return src;
     },
     
     /**
-     * Hide the Preview
+     * Get the coordinations from which PhotoSwipe should animate
      */
-    hidePreview: function() {
-        $('.video').remove();
-        $('.preview:visible').hide({
-            duration: 250
-        });
-        document.location.hash = '';
-        $('.lead.images').show();
-        by8.toggleControlsVisible(true);
+    getThumbBoundsFn: function(index) {
+        var link = $('.thumbnail-link').eq(index),
+        offset = link.offset(),
+        width = by8.getItemAttr(index, 'width');
+        return {
+            x: offset.left,
+            y: offset.top-50/*navbar*/,
+            w: width
+        };
     },
-    
-    doImageClick: function(uri) {
-        console.debug('image: '+uri);
-    },
-    
-    doVideoClick: function(uri) {
-        console.debug('video: '+uri);
-    },
-    
-    /**
-     * Run before Preview changes slides.  Detect if image or video and swap out
-     * thumbnail with real content.
-     */
-    onBeforeChange: function(e, slick, currentIndex, nextIndex) {
-        var slide = $('.slick-item[data-slick-index='+nextIndex+']'),
-        type = by8.getItemAttr(nextIndex, 'data-type');
-        
-        /*
-         * Cleanup previous <video> elements
-         */
-        $('.video').remove();
-        
-        var src = by8.getItemAttr(nextIndex, 'data-url');
-        if (type === 'image') {
-            slide.attr('src', src);
-        }
-        else if (type === 'video') {
-            var track = $('.slick-track'),
-            video = by8.createVideoTag(src);
-            video.width = slide.width();
-            track.append(video);
-        }
-    },
+
     /**
      * Runs after Preview changes slides.  Update the browser's hash with the
      * one for the current slide.
      */
-    onChange: function(e, slick, currentIndex) {
-        var hash = by8.getItemAttr(currentIndex, 'data-thumbnail');
+    onChange: function() {
+        var index = by8.gallery.getCurrentIndex(),
+        hash = by8.getItemAttr(index, 'data-thumbnail');
         document.location.hash = hash;
-        /*
-         * Update footer with image name.
-         * TODO: get tags
-         */
-        var url = by8.getItemAttr(currentIndex, 'data-url'),
-        index = url.lastIndexOf('/'),
-        name = url.substring(index+1);
-        $('.footer .text').html(name);
     },
     
     createVideoTag: function(url) {
@@ -152,11 +118,28 @@ $.extend(by8, {
     },
     
     /**
-     * Given the Slick index, find the data-thumbnail from the parent anchor &lt;a>
+     * Given the Slick index, find the id from the parent anchor &lt;a>
+     * @param {Number} index
+     * The index of the item to find
+     * @param {String} attrName
+     * The name of the attribute to fetch.  If the attrName isn't found on the
+     * link, then search on the underlying "img" element.
      */
     getItemAttr: function(index, attrName) {
-        var anchor = $('.thumbnail-link')[index];
-        return $(anchor).attr(attrName);
+        var anchor = $('.thumbnail-link').eq(index),
+        value = anchor.attr(attrName);
+        if (!value) {
+            var img = anchor.find('.thumbnail');
+            value = img.attr(attrName);
+        }
+        return value;
+    },
+    
+    /**
+     * Given the <code>url</code>, find the item index
+     */
+    getIndexFromUrl: function(url) {
+        
     },
     
     /**
@@ -190,7 +173,7 @@ $(function() {
      * Change links' 'href' to its 'data-thumbnail'
      */
     links.each(function() {
-        var thumb = $(this).data('thumbnail');
+        var thumb = $(this).attr('data-thumbnail');
         if (thumb) {
             var href = this.href;
             $(this).attr('data-url', href);
@@ -201,25 +184,16 @@ $(function() {
      * Handle initial load URL with hashes
      */
     var hash = document.location.hash;
-    if (hash) {
+    if (hash && hash.indexOf('&closed') < 0) {
         by8.showPreview(hash.substring(1), true);
     }
     $(window).on('hashchange', function(e) {
         var hash = document.location.hash;
-        if (hash) {
+        if (hash && hash.indexOf('&closed') < 0) {
             by8.showPreview(hash.substring(1), true);
         }
-        else {
-            by8.hidePreview();
-        }
-    });
-
-    /*
-     * Handle ESC on main document
-     */
-    $(document).on('keyup', function(e) {
-        if (e.keyCode === 27/*ESC*/) {
-            by8.hidePreview();
+        else if (by8.gallery) {
+            by8.gallery.close();
         }
     });
 });

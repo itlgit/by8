@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -34,8 +33,6 @@ public class ManifestFilter implements Filter {
     private ServletContext servletContext;
     private String proxyTarget;
     private String aeon = "http://aeon/";
-
-    private Pattern typeTest = Pattern.compile(".*\\.mp4$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Default constructor.
@@ -91,6 +88,11 @@ public class ManifestFilter implements Filter {
 
 	}
 
+	/**
+	 * Get the Manifest element from the URI
+	 * @param origPath
+	 * @return Manifest
+	 */
     private Manifest get(String origPath) {
         try {
             String json = getManifestContent(origPath);
@@ -109,6 +111,8 @@ public class ManifestFilter implements Filter {
                 Image img = new Image();
                 img.setUrl(jsonImg.get("lg").getAsString());
                 img.setThumb(jsonImg.get("tn").getAsString());
+                img.setWidth(jsonImg.get("w").getAsInt());
+                img.setHeight(jsonImg.get("h").getAsInt());
                 manifest.getImages().add(img);
             }
             return manifest;
@@ -177,12 +181,14 @@ public class ManifestFilter implements Filter {
 
     private String makeLink(String prefix, Image item) {
         String url = item.getUrl();
-        String type = typeTest.matcher(url).matches() ? "video" : "image";
+        String type = item.getType();
         String thumb = item.getThumb();
+        int width = item.getWidth();
+        int height = item.getHeight();
         String fullUrl = proxyTarget+url;
         String fullThumb = proxyTarget+thumb;
         return  "<a class=\"thumbnail-link\" data-thumbnail=\""+thumb+"\" data-type=\""+type+"\" href=\""+fullUrl+"\">"+
-                "<img class=\"thumbnail\" src=\""+fullThumb+"\">"+
+                "<img class=\"thumbnail\" src=\""+fullThumb+"\" width=\""+width+"\" height=\""+height+"\">"+
                 "</a>";
     }
 
