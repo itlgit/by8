@@ -6,7 +6,8 @@ public class Image {
     public static final String IMAGE_TYPE = "image";
     public static final String VIDEO_TYPE = "video";
 
-    private static final Pattern TYPE_TEST = Pattern.compile(".*\\.mp4$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TYPE_TEST = Pattern.compile(".*\\.mp4$|.*\\.mov$",
+            Pattern.CASE_INSENSITIVE);
 
     private String url;
     private String thumb;

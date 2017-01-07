@@ -28,12 +28,20 @@ $.extend(by8, {
                 height = 1024,
                 width = Math.round(height/ratio),
                 type = by8.getItemAttr(i, 'data-type'),
-                src = by8.getItemAttr(i, type === 'image' ? 'data-url' : 'src');
-                items.push({
-                    src: src,
-                    w: width,
-                    h: height
-                });
+                src = by8.getItemAttr(i, 'data-url');
+                
+                if (type === 'image') {
+                    items.push({
+                        src: src,
+                        w: width,
+                        h: height
+                    });
+                }
+                else if (type === 'video') {
+                    items.push({
+                        html: by8.createVideoTag(src, i)
+                    });
+                }
             });
         }
         requirejs(['PhotoSwipe/photoswipe.min',
@@ -62,10 +70,7 @@ $.extend(by8, {
                 var gallery = by8.gallery =
                     new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, by8.items, options);
                 gallery.listen('afterChange', by8.onChange);
-                gallery.listen('destroy', function() {
-                    delete by8.gallery;
-                    document.location.hash += '&closed';
-                });
+                gallery.listen('destroy', by8.onGalleryDestroy);
                 gallery.init();
             });
         }
@@ -98,22 +103,53 @@ $.extend(by8, {
      * one for the current slide.
      */
     onChange: function() {
+        /*
+         * Update browser hash
+         */
         var index = by8.gallery.getCurrentIndex(),
+        lastIndex = by8.lastIndex,
         hash = by8.getItemAttr(index, 'data-thumbnail');
         document.location.hash = hash;
+        /*
+         * If previous video, stop it before starting the current one.
+         */
+        by8.lastIndex = index;
+        var video = $('video[data-index="'+lastIndex+'"]')[0];
+        if (video) {
+            video.pause();
+        }
+        video = $('video[data-index="'+index+'"]')[0];
+        if (video) {
+            video.play();
+        }
     },
     
-    createVideoTag: function(url) {
-        var video = document.createElement('video'),
-        source = document.createElement('source');
-        
-        source.type = 'video/mp4';
-        source.src = url;
-        video.appendChild(source);
-        
-        video.autoplay = true;
-        video.controls = true;
-        video.className = 'video';
+    /**
+     * Called when the gallery is destroyed.
+     */
+    onGalleryDestroy: function() {
+        delete by8.gallery;
+        document.location.hash += '&closed';
+        /*
+         * Stop current videos
+         */
+        var index = by8.lastIndex;
+        video = $('video[data-index="'+index+'"]')[0];
+        if (video) {
+            video.pause();
+        }
+    },
+    
+    /**
+     * Create a video HTML tag for the given URL.
+     * @param {String}
+     */
+    createVideoTag: function(url, index) {
+        var video = [
+            '<video controls data-index="'+index+'" width="100%" height="100%">',
+            '<source type="video/mp4" src="'+url+'"/>',
+            '</video>'
+        ].join('');
         return video;
     },
     
