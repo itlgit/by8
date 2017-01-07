@@ -39,7 +39,7 @@ $.extend(by8, {
                 }
                 else if (type === 'video') {
                     items.push({
-                        html: by8.createVideoTag(src, i)
+                        html: by8.createVideoTag(i)
                     });
                 }
             });
@@ -88,12 +88,12 @@ $.extend(by8, {
      * Get the coordinations from which PhotoSwipe should animate
      */
     getThumbBoundsFn: function(index) {
-        var link = $('.thumbnail-link').eq(index),
+        var link = $('.thumbnail').eq(index),
         offset = link.offset(),
         width = by8.getItemAttr(index, 'width');
         return {
             x: offset.left,
-            y: offset.top-50/*navbar*/,
+            y: offset.top,
             w: width
         };
     },
@@ -129,7 +129,7 @@ $.extend(by8, {
      */
     onGalleryDestroy: function() {
         delete by8.gallery;
-        document.location.hash += '&closed';
+        document.location.hash = '&closed';
         /*
          * Stop current videos
          */
@@ -142,11 +142,14 @@ $.extend(by8, {
     
     /**
      * Create a video HTML tag for the given URL.
-     * @param {String}
+     * @param {Number} index
+     * The video index in the array of items.
      */
-    createVideoTag: function(url, index) {
-        var video = [
-            '<video controls data-index="'+index+'" width="100%" height="100%">',
+    createVideoTag: function(index) {
+        var url = by8.getItemAttr(index, 'data-url'),
+        thumb = by8.getItemAttr(index, 'src'),
+        video = [
+            '<video controls data-index="'+index+'" poster="'+thumb+'" width="100%" height="100%">',
             '<source type="video/mp4" src="'+url+'"/>',
             '</video>'
         ].join('');
