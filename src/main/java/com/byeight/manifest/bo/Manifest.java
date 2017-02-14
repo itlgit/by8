@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Manifest {
     private List<String> directories;
-    private List<Image> images;
+    private List<Item> items;
 
     public List<String> getDirectories() {
         if (directories == null) {
@@ -13,10 +13,10 @@ public class Manifest {
         }
         return directories;
     }
-    public List<Image> getImages() {
-        if (images == null) {
-            images = new ArrayList<>();
+    public List<Item> getItems() {
+        if (items == null) {
+            items = new ArrayList<>();
         }
-        return images;
+        return items;
     }
 }

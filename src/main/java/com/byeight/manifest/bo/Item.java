@@ -2,7 +2,7 @@ package com.byeight.manifest.bo;
 
 import java.util.regex.Pattern;
 
-public class Image {
+public class Item {
     public static final String IMAGE_TYPE = "image";
     public static final String VIDEO_TYPE = "video";
 

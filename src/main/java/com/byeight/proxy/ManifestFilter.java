@@ -20,7 +20,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import com.byeight.manifest.bo.Image;
+import com.byeight.manifest.bo.Item;
 import com.byeight.manifest.bo.Manifest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -48,8 +48,8 @@ public class ManifestFilter implements Filter {
     public void init(FilterConfig fConfig) throws ServletException {
         servletContext = fConfig.getServletContext();
         String proxyTarget = System.getProperty("manifest.proxy.target");
-        if (proxyTarget == null || "".equals(proxyTarget)) {
-            proxyTarget = "/";
+        if (proxyTarget == null || proxyTarget.length() == 0) {
+            proxyTarget = "";
         }
         this.proxyTarget = proxyTarget;
     }
@@ -84,7 +84,7 @@ public class ManifestFilter implements Filter {
         Manifest manifest = get(origPath);
         StringBuffer nav = getNavigatorHtml(origPath);
         StringBuffer dirs = getDirectoryHtml(manifest.getDirectories(), origPath);
-        StringBuffer imgs = getImagesHtml(manifest.getImages(), origPath);
+        StringBuffer imgs = getItemsHtml(manifest.getItems(), origPath);
         writer.write(makeIndexContent(requestURI, nav, dirs, imgs));
 
 	}
@@ -95,13 +95,13 @@ public class ManifestFilter implements Filter {
 	 * @return Manifest
 	 */
     private Manifest get(String origPath) {
+        Manifest manifest = new Manifest();
         try {
             String json = getManifestContent(origPath);
             JsonParser parser = new JsonParser();
             JsonObject object = parser.parse(json).getAsJsonObject();
             JsonArray dirs = object.getAsJsonArray("directories");
             JsonArray imgs = object.getAsJsonArray("images");
-            Manifest manifest = new Manifest();
 
             for (int i=0,len=dirs.size(); i<len; i++) {
                 String dir = dirs.get(i).getAsString();
@@ -109,23 +109,23 @@ public class ManifestFilter implements Filter {
             }
             for (int i=0,len=imgs.size(); i<len; i++) {
                 JsonObject jsonImg = imgs.get(i).getAsJsonObject();
-                Image img = new Image();
+                Item img = new Item();
                 img.setUrl(jsonImg.get("lg").getAsString());
                 img.setThumb(jsonImg.get("tn").getAsString());
                 img.setWidth(jsonImg.get("w").getAsInt());
                 img.setHeight(jsonImg.get("h").getAsInt());
-                manifest.getImages().add(img);
+                manifest.getItems().add(img);
             }
-            return manifest;
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return null;
+        return manifest;
     }
 
     private String getManifestContent(String origPath) throws IOException {
-        URL destURL = new URL(aeon + "thumbs/" + origPath + "manifest.json");
+        String prefix = getProxyTarget();
+        URL destURL = new URL(prefix + "thumbs/" + origPath + "manifest.json");
         HttpURLConnection conn = (HttpURLConnection) destURL.openConnection();
 
         conn.connect();
@@ -170,27 +170,32 @@ public class ManifestFilter implements Filter {
         return "<a href=\""+item+"/\">"+basename+"</a>";
     }
 
-    private StringBuffer getImagesHtml(List<Image> images, String origPath) {
+    private StringBuffer getItemsHtml(List<Item> items, String origPath) {
         StringBuffer buffer = new StringBuffer();
-        for (int i=0,len=images.size(); i<len; i++) {
-            Image image = images.get(i);
+        for (int i=0,len=items.size(); i<len; i++) {
+            Item image = items.get(i);
             String link = makeLink(origPath, image);
             buffer.append(link+"\n");
         }
         return buffer;
     }
 
-    private String makeLink(String prefix, Image item) {
+    private String makeLink(String prefix, Item item) {
         String url = item.getUrl();
         String type = item.getType();
         String thumb = item.getThumb();
+        String filename = url;
+        int last = filename.lastIndexOf('/');
+        if (last > -1) {
+            filename = filename.substring(last);
+        }
         int width = item.getWidth();
         int height = item.getHeight();
-        String fullUrl = proxyTarget+url;
-        String fullThumb = proxyTarget+thumb;
-        return  "<a class=\"thumbnail-link\" data-thumbnail=\""+thumb+"\" data-type=\""+type+"\" href=\""+fullUrl+"\">"+
+        String fullUrl = getProxyTarget()+url;
+        String fullThumb = getProxyTarget()+thumb;
+        return  "<a class=\"thumbnail-link\" title=\""+filename+"\" data-thumbnail=\""+thumb+"\" data-type=\""+type+"\" href=\""+fullUrl+"\">"+
                 "<img class=\"thumbnail\" src=\""+fullThumb+"\" width=\""+width+"\" height=\""+height+"\">"+
-                (type == Image.VIDEO_TYPE ? "<i class=\"fa fa-play fa-lg\"></i>" : "")+
+                (type == Item.VIDEO_TYPE ? "<i class=\"fa fa-play fa-lg\"></i>" : "")+
                 "</a>";
     }
 
@@ -219,7 +224,7 @@ public class ManifestFilter implements Filter {
         return html;
     }
 
-    private String makeIndexContent(String current, StringBuffer navigator, StringBuffer directories, StringBuffer images) throws IOException {
+    private String makeIndexContent(String current, StringBuffer navigator, StringBuffer directories, StringBuffer items) throws IOException {
         StringBuffer html = new StringBuffer();
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/templates/index.html");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -248,8 +253,16 @@ public class ManifestFilter implements Filter {
 
         token = "{IMAGES}";
         start = html.indexOf(token);
-        html.replace(start, start+token.length(), images.toString());
+        html.replace(start, start+token.length(), items.toString());
         return html.toString();
+    }
+
+    private String getProxyTarget() {
+        String target = proxyTarget;
+        if (target.length() == 0) {
+            target = aeon;
+        }
+        return target;
     }
 
 }
