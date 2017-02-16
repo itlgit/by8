@@ -14,6 +14,15 @@ public class Item {
     private int width;
     private int height;
 
+    public Item() {}
+
+    public Item(String url, String thumb, int width, int height) {
+        super();
+        this.url = url;
+        this.thumb = thumb;
+        this.width = width;
+        this.height = height;
+    }
     public String getUrl() {
         return url;
     }
