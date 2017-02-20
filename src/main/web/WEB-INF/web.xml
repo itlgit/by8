@@ -15,6 +15,7 @@
     <display-name>TagServlet</display-name>
     <servlet-name>TagServlet</servlet-name>
     <servlet-class>com.byeight.tags.TagServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>TagServlet</servlet-name>

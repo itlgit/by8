@@ -53,9 +53,17 @@ public class Item {
      * @return
      */
     public String getType() {
+        return getType(getUrl());
+    }
+
+    /**
+     * Infer the type from the given itemName
+     * @param itemName
+     * @return
+     */
+    public static String getType(String itemName) {
         String type = IMAGE_TYPE;
-        String url = getUrl();
-        if (TYPE_TEST.matcher(url).matches()) {
+        if (TYPE_TEST.matcher(itemName).matches()) {
             type = VIDEO_TYPE;
         }
         return type;

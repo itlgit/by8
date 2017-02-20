@@ -23,10 +23,21 @@ import com.byeight.template.IndexGenerator;
  */
 public class TagServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private Indexer indexer;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 	    super.init(config);
+
+	    try {
+	        String docsPath = System.getProperty("album.media.path");
+	        if (docsPath == null || docsPath.length() == 0) {
+	            docsPath = "/home/trung/www/thumbs/Media";
+	        }
+            indexer = Indexer.instance(docsPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 
 	/**
@@ -46,14 +57,27 @@ public class TagServlet extends HttpServlet {
 	        query = referer.substring(start);
 	    }
 
-	    List<Tag> tags = getTags(query);
+	    List<Tag> tags = findMatchingTags(query);
+	    ArrayList<String> dirs = new ArrayList<>(tags.size());
 	    ArrayList<Item> items = new ArrayList<>(tags.size());
 	    for (Tag tag : tags) {
-	        Item item = buildItem(tag);
-	        items.add(item);
+	        String type = tag.getType();
+	        /*
+	         * Directory
+	         */
+	        if (type == null || type.length() == 0) {
+	            dirs.add(tag.getPath());
+	        }
+	        /*
+	         * File
+	         */
+	        else {
+	            Item item = buildItem(tag);
+	            items.add(item);
+	        }
 	    }
 
-	    Manifest manifest = new Manifest("", new ArrayList<String>(0), items);
+	    Manifest manifest = new Manifest("", dirs, items);
 	    IndexGenerator ig = new IndexGenerator(getServletContext(), getProxyTarget(request));
 	    response.setContentType("text/html; charset=UTF-8");
 	    response.getWriter().write(ig.makeIndexContent(request.getRequestURI(), manifest));
@@ -67,10 +91,13 @@ public class TagServlet extends HttpServlet {
 	    String query = request.getParameter("query");
 	}
 
-	private List<Tag> getTags(String query) {
-	    ArrayList<Tag> tags = new ArrayList<>();
-	    tags.add(new Tag("Media/Dad's Pictures/IMG_0084.JPG", Item.IMAGE_TYPE, "helmet"));
-	    tags.add(new Tag("Media/House/IMG_2800.JPG", Item.IMAGE_TYPE, "house"));
+	/**
+	 * Find the list of matching tags from the search term
+	 * @param term
+	 * @return
+	 */
+	private List<Tag> findMatchingTags(String term) {
+	    List<Tag> tags = indexer.query(term);
 	    return tags;
 	}
 
@@ -87,9 +114,10 @@ public class TagServlet extends HttpServlet {
 	            thumb = item.getThumb();
 	            width = item.getWidth();
 	            height = item.getHeight();
+	            break;
 	        }
 	    }
-	    Item item = new Item(path, thumb, width, height);
+	    Item item = new Item(comparePath, thumb, width, height);
 	    return item;
 	}
 
@@ -114,6 +142,12 @@ public class TagServlet extends HttpServlet {
         }
         String target = isLocalhost ? Configuration.getAeonPrefix() : "";
         return target;
+    }
+
+    @Override
+    public void destroy() {
+        indexer.stop();
+        super.destroy();
     }
 
 }
