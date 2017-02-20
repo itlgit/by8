@@ -8,6 +8,7 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,6 +65,7 @@ public class FilenameIndexer implements Collector {
                     WatchKey key = service.take();
                     List<WatchEvent<?>> events = key.pollEvents();
                     if (events.size() > 0) {
+                        System.out.println("Directory contents changed.  Re-index starting at "+new Date().toString());
                         iwc = new IndexWriterConfig(analyzer);
                         iwc.setOpenMode(OpenMode.CREATE);
                         writer = new IndexWriter(dir, iwc);

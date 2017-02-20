@@ -79,8 +79,7 @@ public class IndexGenerator {
     private String makeDirectoryLink(String item) {
         int lastSlash = item.lastIndexOf('/');
         String basename = item.substring(lastSlash+1);
-//        return "<a href=\""+basename+"/\">"+basename+"</a>";
-        String fullUrl = "/album/"+item;
+        String fullUrl = servletContext.getContextPath()+"/"+item;
         return "<a href=\""+fullUrl+"/\">"+basename+"</a>";
     }
 
