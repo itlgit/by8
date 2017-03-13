@@ -77,10 +77,11 @@ public class SearchServlet extends HttpServlet {
 	        }
 	    }
 
+	    String manifestUri = contextPath+"/Search \""+query+"\"";
 	    Manifest manifest = new Manifest("", dirs, items);
 	    IndexGenerator ig = new IndexGenerator(getServletContext(), getProxyTarget(request));
 	    response.setContentType("text/html; charset=UTF-8");
-	    response.getWriter().write(ig.makeIndexContent(request.getRequestURI(), manifest));
+	    response.getWriter().write(ig.makeIndexContent(manifestUri, manifest));
 	}
 
 	/**

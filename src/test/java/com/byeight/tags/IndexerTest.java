@@ -15,7 +15,7 @@ public class IndexerTest {
     public void setup() {
         if (indexer == null) {
             try {
-                indexer = Indexer.instance("./src/test/resources/Media");
+                indexer = Indexer.instance("./src/test/resources/thumbs/Media");
                 while (!indexer.isReady()) {
                     Thread.sleep(500);
                     Thread.yield();
